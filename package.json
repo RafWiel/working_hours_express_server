@@ -1,0 +1,30 @@
+{
+  "name": "working_hours_server",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "bin": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "local": "nodemon --watch src src/app.js --exec \"npm run lint && node\"",
+    "lint": "eslint \"**/*.js\"",
+    "build": "pkg package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RafWiel/working_hours_express_server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RafWiel/working_hours_express_server/issues"
+  },
+  "homepage": "https://github.com/RafWiel/working_hours_express_server#readme",
+  "dependencies": {
+    "eslint": "^8.26.0",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
