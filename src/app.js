@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const config = require('./config/config');
 const {sequelize} = require('./models');
-const fs = require('fs');
+//const fs = require('fs');
 const path = require('path');
 const helmet = require("helmet");
 const morganMiddleware = require("./middlewares/logger");
@@ -22,11 +22,15 @@ app.use(bodyParser.json());
 app.use(helmet());
 app.use(morganMiddleware);
 
+module.exports = app;
+
 // load routes
-fs.readdirSync(`${__dirname}/routes`)
-  .forEach((file) => {
-    require(path.join(`${__dirname}/routes`, file))(app);
-  });
+require("./routes");
+
+// fs.readdirSync(`${__dirname}/routes`)
+//   .forEach((file) => {
+//     require(path.join(`${__dirname}/routes`, file))(app);
+//   });
 
 const message = `Working Hours server listening on port ${config.port}`;
 const isReset = 0;
@@ -41,3 +45,5 @@ sequelize.sync({force: isReset})
 app.get('/', (req, res) => {
   res.send(message);
 });
+
+

@@ -1,7 +1,7 @@
-const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 const config = require('../config/config');
+const sortDir = require('../misc/sortDir');
 const db = {};
 
 const sequelize = new Sequelize(
@@ -11,14 +11,13 @@ const sequelize = new Sequelize(
   config.db.options
 );
 
-fs.readdirSync(__dirname)
-  .filter((file) =>
-    file !== 'index.js'
-  )
-  .forEach((file) => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize);
-    db[model.name] = model;
-  });
+const basename  = path.basename(module.filename);
+const filePaths = sortDir(__dirname, basename);
+
+filePaths.forEach((filePath) => {
+  const model = require(filePath)(sequelize, Sequelize);
+  db[model.name] = model;
+});
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
