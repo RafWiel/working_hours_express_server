@@ -23,18 +23,32 @@ winston.addColors( {
 });
 
 const format = winston.format.combine(
+  winston.format.errors({ stack: true }),
   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
   winston.format.printf(
-    (info) => `${info.timestamp} ${info.level}: ${info.message}`,
+    ({ level, message, timestamp, stack }) => {
+      if (stack) {
+        return `${timestamp} ${level}: ${stack}\r\n\r\n`;
+      }
+      return `${timestamp} ${level}: ${message}\r\n\r\n`;
+    },
   ),
-)
+);
+
 const transports = [
   new winston.transports.Console({
     format: winston.format.combine(
+      winston.format.errors({ stack: true }),
       winston.format.colorize({ all: true }),
       winston.format.printf(
-        (info) => `${info.timestamp} SERVER: ${info.message}`,
-      )
+        ({ message, timestamp, stack }) => {
+          if (stack) {
+            return `${timestamp} SERVER: ${message} - ${stack}`;
+          }
+
+          return `${timestamp} SERVER: ${message}`;
+        },
+      ),
     )
   }),
   new winston.transports.File({
@@ -50,20 +64,19 @@ const transports = [
   // }),
 ];
 
-const logger = winston.createLogger({
-  level: level(),
-  levels,
-  format,
-  transports,
-});
-
 const clientTransports = [
   new winston.transports.Console({
     format: winston.format.combine(
+      winston.format.errors({ stack: true }),
       winston.format.colorize({ all: true }),
       winston.format.printf(
-        (info) => `${info.timestamp} CLIENT: ${info.message}`,
-      )
+        ({ message, timestamp, stack }) => {
+          if (stack) {
+            return `${timestamp} CLIENT: ${message} - ${stack}`;
+          }
+          return `${timestamp} CLIENT: ${message}`;
+        },
+      ),
     )
   }),
   new winston.transports.File({
@@ -78,6 +91,13 @@ const clientTransports = [
   //   maxFiles:'10',
   // }),
 ]
+
+const logger = winston.createLogger({
+  level: level(),
+  levels,
+  format,
+  transports,
+});
 
 const clientLogger = winston.createLogger({
   level: level(),

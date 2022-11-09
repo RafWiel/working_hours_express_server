@@ -8,12 +8,16 @@ module.exports = {
       logger.info(req.body);
 
       const { date, project, version, hoursCount } = req.body;
+      const hours = parseFloat(hoursCount, 10);
+
+      1.5 ok
+      1,5 obcina do 1
 
       Task_AD.create({
         date,
         project,
         version,
-        hoursCount,
+        hoursCount: hours,
       })
       .then(async (item) => {
         res.send({
