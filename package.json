@@ -3,23 +3,23 @@
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
-  "bin": "src/app.js",
+  "bin": "src/server.js",
   "scripts": {
     "start": "node src/app.js",
-    "local": "nodemon --watch src src/app.js --exec \"npm run lint && node\"",
+    "local": "nodemon --watch src src/server.js --exec \"npm run lint && node\"",
     "lint": "eslint \"**/*.js\"",
     "build": "pkg package.json"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RafWiel/working_hours_express_server.git"
+    "url": "git+https://github.com/rafwiel/working_hours_express_server.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/RafWiel/working_hours_express_server/issues"
+    "url": "https://github.com/rafwiel/working_hours_express_server/issues"
   },
-  "homepage": "https://github.com/RafWiel/working_hours_express_server#readme",
+  "homepage": "https://github.com/rafwiel/working_hours_express_server#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
     "bluebird": "^3.7.2",
