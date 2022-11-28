@@ -18,6 +18,10 @@ app.use(bodyParser.json());
 app.use(helmet());
 app.use(morganMiddleware);
 
+//uwaga testy!
+app.post('/users', (req, res) => {
+});
+
 module.exports = app;
 
 // load routes
