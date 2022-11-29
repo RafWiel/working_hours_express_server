@@ -20,6 +20,17 @@ app.use(morganMiddleware);
 
 //uwaga testy!
 app.post('/users', (req, res) => {
+  const {user, password} = req.body;
+
+  if (!user || !password) {
+    res.sendStatus(400);
+    return;
+  }
+
+  res.send({
+    status: 'ok',
+    userId: 1,
+  });
 });
 
 module.exports = app;
