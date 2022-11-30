@@ -35,6 +35,7 @@
     "mysql2": "^3.0.0-rc.1",
     "sequelize": "^6.25.4",
     "sequelize-cli": "^6.5.2",
+    "sequelize-mock": "^0.10.2",
     "winston": "^3.8.2"
   },
   "devDependencies": {

@@ -3,7 +3,7 @@ const app = require('../src/app.js');
 
 describe('POST /logs', () => {
   describe('data ok', () => {
-    test('responds with 200 status code', async () => {
+    it('responds with 200 status code', async () => {
       const response = await request(app).post('/users').send({
         user: 'user',
         password: 'password'
@@ -12,7 +12,7 @@ describe('POST /logs', () => {
       expect(response.statusCode).toBe(200);
     });
 
-    test('specifies json in content type header', async () => {
+    it('specifies json in content type header', async () => {
       const response = await request(app).post('/users').send({
         user: 'user',
         password: 'password'
@@ -21,7 +21,7 @@ describe('POST /logs', () => {
       expect(response.headers['content-type']).toEqual(expect.stringContaining('json'));
     });
 
-    test('response has userId defined', async () => {
+    it('response has userId defined', async () => {
       const response = await request(app).post('/users').send({
         user: 'user',
         password: 'password'
@@ -38,7 +38,7 @@ describe('POST /logs', () => {
       {}
     ]
     bodyArray.forEach(async (item) => {
-      test('responds with 400 status code', async () => {
+      it('responds with 400 status code', async () => {
         const response = await request(app).post('/users').send(item);
 
         expect(response.statusCode).toBe(400);
