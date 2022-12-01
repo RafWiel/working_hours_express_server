@@ -29,6 +29,9 @@ function validate(req, res) {
   return true;
 }
 
+todo: test /ad/tasks/projects/distinct
+todo: test /ad/tasks/newest
+
 module.exports = {
   async create (req, res) {
     try {
