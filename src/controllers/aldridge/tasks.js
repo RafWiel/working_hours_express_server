@@ -3,10 +3,39 @@ const tools = require('../../misc/tools');
 const {logger} = require('../../misc/logger');
 const { Sequelize, Op } = require('sequelize');
 
+function validate(req, res) {
+  const { date, project, version, hoursCount } = req.body;
+
+  if (!date) {
+    tools.sendBadRequestError(res, 'Undefined parameter: date');
+    return false;
+  }
+
+  if (!project) {
+    tools.sendBadRequestError(res, 'Undefined parameter: project');
+    return false;
+  }
+
+  if (!version) {
+    tools.sendBadRequestError(res, 'Undefined parameter: version');
+    return false;
+  }
+
+  if (!hoursCount) {
+    tools.sendBadRequestError(res, 'Undefined parameter: hoursCount');
+    return false;
+  }
+
+  return true;
+}
+
 module.exports = {
   async create (req, res) {
     try {
       logger.info(req.body);
+
+      if (validate(req, res) === false)
+        return;
 
       const { date, project, version, hoursCount } = req.body;
 
