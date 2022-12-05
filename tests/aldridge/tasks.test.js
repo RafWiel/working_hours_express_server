@@ -17,9 +17,9 @@ jest.mock('../../src/models/aldridge/task', () => () => {
           return array;
         },
     },
-});
+  });
 
-  taskMock.$queryInterface.$useHandler(function(query, options) {
+  taskMock.$queryInterface.$useHandler(function(query) {
     //console.log(options[0].where);
     if (query === 'findAll') {
       return taskMock.build([
