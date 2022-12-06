@@ -23,6 +23,9 @@ module.exports = app;
 // load routes
 require("./routes");
 
+// db table relations
+require('./database/tableRelations');
+
 
 
 

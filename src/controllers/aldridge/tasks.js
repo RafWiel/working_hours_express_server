@@ -61,7 +61,12 @@ module.exports = {
     Task_AD.findOne({
       order: [['id', 'DESC']],
     })
-    .then((item) => res.send(item))
+    .then((item) => res.send({
+      date: item.date,
+      project: item.project,
+      version: item.version,
+      hoursCount: item.hoursCount
+    }))
     .catch((error) => tools.sendError(res, error));
   },
   async getProjectsDistinct (req, res) {

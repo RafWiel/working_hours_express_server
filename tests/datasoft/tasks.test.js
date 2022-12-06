@@ -148,52 +148,52 @@ describe('POST /ds/tasks', () => {
 });
 
 //Test GET /ds/tasks/projects/distinct
-// describe('GET /ds/tasks/projects/distinct', () => {
-//   beforeEach(() => {
-//     process.env.NODE_ENV = 'development';
-//   });
+describe('GET /ds/tasks/projects/distinct', () => {
+  beforeEach(() => {
+    process.env.NODE_ENV = 'development';
+  });
 
-//   describe('valid data', () => {
-//     it('responds with 200 status code', async () => {
-//       const response = await request(app)
-//         .get('/ds/tasks/projects/distinct');
+  describe('valid data', () => {
+    it('responds with 200 status code', async () => {
+      const response = await request(app)
+        .get('/ds/tasks/projects/distinct');
 
-//       console.log(response.body);
-//       expect(response.statusCode).toBe(200);
-//     });
+      //console.log(response.body);
+      expect(response.statusCode).toBe(200);
+    });
 
-//     it('response body is array', async () => {
-//       const response = await request(app)
-//         .get('/ds/tasks/projects/distinct')
-//         .query({ filter: 'p' });
+    it('response body is array', async () => {
+      const response = await request(app)
+        .get('/ds/tasks/projects/distinct')
+        .query({ filter: 'p' });
 
-//       expect(Array.isArray(response.body)).toBeTruthy();
-//     });
-//   });
-// });
+      expect(Array.isArray(response.body)).toBeTruthy();
+    });
+  });
+});
 
 //Test GET /ds/tasks/newest
-// describe('GET /ds/tasks/newest', () => {
-//   beforeEach(() => {
-//     process.env.NODE_ENV = 'development';
-//   });
+describe('GET /ds/tasks/newest', () => {
+  beforeEach(() => {
+    process.env.NODE_ENV = 'development';
+  });
 
-//   describe('valid data', () => {
-//     it('responds with 200 status code', async () => {
-//       const response = await request(app)
-//         .get('/ds/tasks/newest');
+  describe('valid data', () => {
+    it('responds with 200 status code', async () => {
+      const response = await request(app)
+        .get('/ds/tasks/newest');
 
-//       console.log(response.body);
-//       expect(response.statusCode).toBe(200);
-//     });
+      //console.log(response.body);
+      expect(response.statusCode).toBe(200);
+    });
 
-//     it('response has date defined', async () => {
-//       const response = await request(app)
-//         .get('/ds/tasks/newest');
+    it('response has date defined', async () => {
+      const response = await request(app)
+        .get('/ds/tasks/newest');
 
-//       expect(response.body.date).toBeDefined();
-//     });
-//   });
-// });
+      expect(response.body.date).toBeDefined();
+    });
+  });
+});
 
 

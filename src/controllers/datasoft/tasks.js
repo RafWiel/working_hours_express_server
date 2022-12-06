@@ -1,8 +1,9 @@
 const clients = require('../../controllers/datasoft/clients');
 const {Task_DS} = require('../../models');
+const {Client_DS} = require('../../models');
 const tools = require('../../misc/tools');
 const {logger} = require('../../misc/logger');
-//const { Sequelize, Op } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 
 function validate(req, res) {
   const { date, client, project, version, price, description } = req.body;
@@ -76,23 +77,28 @@ module.exports = {
       tools.sendError(res, error);
     }
   },
-  // async getNewest (req, res) {
-  //   Task_DS.findOne({
-  //     order: [['id', 'DESC']],
-  //   })
-  //   .then((item) => res.send(item))
-  //   .catch((error) => tools.sendError(res, error));
-  // },
-  // async getProjectsDistinct (req, res) {
-  //   Task_DS.findAll({
-  //     attributes: [Sequelize.fn('distinct', Sequelize.col('project')) ,'project'],
-  //     where: {
-  //       project: {
-  //         [Op.like]: `%${req.query.filter}%`
-  //       }
-  //     }
-  //   })
-  //   .then((values) => res.send(values.map(u => u.project)))
-  //   .catch((error) => tools.sendError(res, error));
-  // },
+  async getNewest (req, res) {
+    Task_DS.findOne({
+      order: [['id', 'DESC']],
+      include: { model: Client_DS, as: 'client', required: true },
+    })
+    .then((item) => res.send({
+      date: item.date,
+      project: item.project
+      tutaj client
+    }))
+    .catch((error) => tools.sendError(res, error));
+  },
+  async getProjectsDistinct (req, res) {
+    Task_DS.findAll({
+      attributes: [Sequelize.fn('distinct', Sequelize.col('project')) ,'project'],
+      where: {
+        project: {
+          [Op.like]: `%${req.query.filter}%`
+        }
+      }
+    })
+    .then((values) => res.send(values.map(u => u.project)))
+    .catch((error) => tools.sendError(res, error));
+  },
 }
