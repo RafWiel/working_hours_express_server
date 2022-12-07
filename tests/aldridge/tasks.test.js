@@ -5,7 +5,7 @@ jest.mock('../../src/models/aldridge/task', () => () => {
   const SequelizeMock = require('sequelize-mock');
   const dbMock = new SequelizeMock();
 
-  var taskMock =  dbMock.define('Task_AD',  {
+  var task =  dbMock.define('Task_AD',  {
     date: '2022-11-30 12:00:00',
     project: 'project',
     version: '1',
@@ -19,10 +19,10 @@ jest.mock('../../src/models/aldridge/task', () => () => {
     },
   });
 
-  taskMock.$queryInterface.$useHandler(function(query) {
+  task.$queryInterface.$useHandler(function(query) {
     //console.log(options[0].where);
     if (query === 'findAll') {
-      return taskMock.build([
+      return task.build([
         {
           date: '2022-11-30 12:00:00',
           project: 'project 1',
@@ -39,7 +39,7 @@ jest.mock('../../src/models/aldridge/task', () => () => {
     }
   });
 
-  return taskMock;
+  return task;
 });
 
 const task = {

@@ -1,11 +1,50 @@
 const request = require('supertest');
 const app = require('../../src/app.js');
 
+jest.mock('../../src/models/datasoft/client', () => () => {
+  const SequelizeMock = require('sequelize-mock');
+  const dbMock = new SequelizeMock();
+
+  var client =  dbMock.define('Client_DS',  {
+    name: 'client',
+  }, {
+    instanceMethods: {
+        map: function () {
+          var array = ['client 1', 'client 2'];
+          return array;
+        },
+    },
+  });
+
+  client.$queryInterface.$useHandler(function(query) {
+    //console.log(options[0].where);
+    if (query === 'findAll') {
+      return client.build([
+        {
+          name: 'client 1',
+        },
+        {
+          name: 'client 2',
+        }
+      ]);
+    }
+
+    if (query === 'findOne') {
+      return client.build({
+        id: 1,
+        name: 'client 1',
+      });
+    }
+  });
+
+  return client;
+});
+
 jest.mock('../../src/models/datasoft/task', () => () => {
   const SequelizeMock = require('sequelize-mock');
   const dbMock = new SequelizeMock();
 
-  var taskMock =  dbMock.define('Task_DS',  {
+  const task =  dbMock.define('Task_DS',  {
     date: '2022-11-30 12:00:00',
     clientId: 1,
     project: 'project',
@@ -21,13 +60,13 @@ jest.mock('../../src/models/datasoft/task', () => () => {
     },
   });
 
-  taskMock.$queryInterface.$useHandler(function(query) {
+  task.$queryInterface.$useHandler(function(query) {
     //console.log(options[0].where);
     if (query === 'findAll') {
-      return taskMock.build([
+      return task.build([
         {
           date: '2022-11-30 12:00:00',
-          clientId: 1,
+          client: 'client 1',
           project: 'project 1',
           version: '1',
           price: 1,
@@ -35,7 +74,7 @@ jest.mock('../../src/models/datasoft/task', () => () => {
         },
         {
           date: '2022-11-30 12:00:00',
-          clientId: 1,
+          client: 'client 2',
           project: 'project 2',
           version: '2',
           price: 1,
@@ -43,9 +82,19 @@ jest.mock('../../src/models/datasoft/task', () => () => {
         }
       ]);
     }
+    if (query === 'findOne') {
+      return task.build({
+        date: '2022-11-30 12:00:00',
+        client: 'client 1',
+        project: 'project 1',
+        version: '1',
+        price: 1,
+        description: 'description'
+      });
+    }
   });
 
-  return taskMock;
+  return task;
 });
 
 const task = {

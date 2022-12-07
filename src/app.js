@@ -18,13 +18,12 @@ app.use(bodyParser.json());
 app.use(helmet());
 app.use(morganMiddleware);
 
+require('./database/tableRelations');
+
 module.exports = app;
 
-// load routes
+// must be called after export
 require("./routes");
-
-// db table relations
-require('./database/tableRelations');
 
 
 

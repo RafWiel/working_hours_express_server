@@ -5,7 +5,7 @@ jest.mock('../../src/models/datasoft/client', () => () => {
   const SequelizeMock = require('sequelize-mock');
   const dbMock = new SequelizeMock();
 
-  var taskMock =  dbMock.define('Client_DS',  {
+  var client =  dbMock.define('Client_DS',  {
     name: 'client',
   }, {
     instanceMethods: {
@@ -16,10 +16,10 @@ jest.mock('../../src/models/datasoft/client', () => () => {
     },
   });
 
-  taskMock.$queryInterface.$useHandler(function(query) {
+  client.$queryInterface.$useHandler(function(query) {
     //console.log(options[0].where);
     if (query === 'findAll') {
-      return taskMock.build([
+      return client.build([
         {
           name: 'client 1',
         },
@@ -30,7 +30,54 @@ jest.mock('../../src/models/datasoft/client', () => () => {
     }
   });
 
-  return taskMock;
+  return client;
+});
+
+jest.mock('../../src/models/datasoft/task', () => () => {
+  const SequelizeMock = require('sequelize-mock');
+  const dbMock = new SequelizeMock();
+
+  const task =  dbMock.define('Task_DS',  {
+    date: '2022-11-30 12:00:00',
+    clientId: 1,
+    project: 'project',
+    version: '1',
+    price: 1,
+    description: 'description'
+  }, {
+    instanceMethods: {
+        map: function () {
+          var array = ['project 1', 'project 2'];
+          return array;
+        },
+    },
+  });
+
+  task.$queryInterface.$useHandler(function(query) {
+    //console.log(options[0].where);
+    if (query === 'findAll') {
+      return task.build([
+        {
+          date: '2022-11-30 12:00:00',
+          clientId: 1,
+          project: 'project 1',
+          version: '1',
+          price: 1,
+          description: 'description'
+        },
+        {
+          date: '2022-11-30 12:00:00',
+          clientId: 1,
+          project: 'project 2',
+          version: '2',
+          price: 1,
+          description: 'description'
+        }
+      ]);
+    }
+  });
+
+  return task;
 });
 
 //Test GET /ds/clients/names/distinct

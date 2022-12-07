@@ -84,8 +84,11 @@ module.exports = {
     })
     .then((item) => res.send({
       date: item.date,
-      project: item.project
-      tutaj client
+      client: item.client.name,
+      project: item.project,
+      version: item.version,
+      price: item.price,
+      description: item.description
     }))
     .catch((error) => tools.sendError(res, error));
   },
