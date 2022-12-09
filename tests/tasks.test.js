@@ -58,6 +58,7 @@ jest.mock('../src/models/task', () => () => {
 
   const task =  dbMock.define('Task',  {
     date: '2022-11-30 12:00:00',
+    type: 1,
     clientId: 1,
     projectId: 1,
     version: '1',
@@ -79,6 +80,7 @@ jest.mock('../src/models/task', () => () => {
       return task.build([
         {
           date: '2022-11-30 12:00:00',
+          type: 1,
           client: 'client 1',
           project: 'project 1',
           version: '1',
@@ -87,17 +89,19 @@ jest.mock('../src/models/task', () => () => {
         },
         {
           date: '2022-11-30 12:00:00',
+          type: 2,
           client: 'client 2',
           project: 'project 2',
           version: '2',
           description: 'description',
-          price: 1,
+          hours: 1,
         }
       ]);
     }
     if (query === 'findOne') {
       return task.build({
         date: '2022-11-30 12:00:00',
+        type: 1,
         client: 'client 1',
         project: 'project 1',
         version: '1',
@@ -112,11 +116,12 @@ jest.mock('../src/models/task', () => () => {
 
 const task = {
   date: '2022-11-30 12:00:00',
+  type: 1,
   client: 'client',
   project: 'project',
   version: '1',
+  description: 'description',
   price: 1,
-  description: 'description'
 };
 
 //Test POST /tasks
@@ -154,35 +159,40 @@ describe('POST /tasks', () => {
   describe('invalid data', () => {
     const bodyArray = [
       {
+        type: 1,
         client: 'client',
         project: 'project',
         version: '1',
+        description: 'description',
         price: 1,
-        description: 'description'
       },
       {
         date: '2022-11-30 12:00:00',
+        type: 1,
         project: 'project',
         version: '1',
+        description: 'description',
         price: 1,
-        description: 'description'
       },
       {
         date: '2022-11-30 12:00:00',
+        type: 1,
         client: 'client',
         version: '1',
+        description: 'description',
         price: 1,
-        description: 'description'
       },
       {
         date: '2022-11-30 12:00:00',
+        type: 1,
         client: 'client',
         project: 'project',
+        description: 'description',
         price: 1,
-        description: 'description'
       },
       {
         date: '2022-11-30 12:00:00',
+        type: 1,
         client: 'client',
         project: 'project',
         version: '1',
@@ -190,6 +200,7 @@ describe('POST /tasks', () => {
       },
       {
         date: '2022-11-30 12:00:00',
+        type: 1,
         client: 'client',
         project: 'project',
         version: '1',
@@ -210,7 +221,7 @@ describe('POST /tasks', () => {
 });
 
 //Test GET /tasks/projects/distinct
-describe('GET /tasks/projects/distinct', () => {
+describe('GET /projects/names/distinct', () => {
   beforeEach(() => {
     process.env.NODE_ENV = 'development';
   });
@@ -218,7 +229,7 @@ describe('GET /tasks/projects/distinct', () => {
   describe('valid data', () => {
     it('responds with 200 status code', async () => {
       const response = await request(app)
-        .get('/tasks/projects/distinct');
+        .get('/projects/names/distinct');
 
       //console.log(response.body);
       expect(response.statusCode).toBe(200);
@@ -226,8 +237,11 @@ describe('GET /tasks/projects/distinct', () => {
 
     it('response body is array', async () => {
       const response = await request(app)
-        .get('/tasks/projects/distinct')
-        .query({ filter: 'p' });
+        .get('/projects/names/distinct')
+        .query({
+          'task-type': 1,
+          filter: 'p'
+        });
 
       expect(Array.isArray(response.body)).toBeTruthy();
     });
@@ -243,7 +257,8 @@ describe('GET /tasks/newest', () => {
   describe('valid data', () => {
     it('responds with 200 status code', async () => {
       const response = await request(app)
-        .get('/tasks/newest');
+        .get('/tasks/newest')
+        .query({ type: 1 });
 
       //console.log(response.body);
       expect(response.statusCode).toBe(200);
@@ -251,7 +266,8 @@ describe('GET /tasks/newest', () => {
 
     it('response has date defined', async () => {
       const response = await request(app)
-        .get('/tasks/newest');
+        .get('/tasks/newest')
+        .query({ type: 1 });
 
       expect(response.body.date).toBeDefined();
     });

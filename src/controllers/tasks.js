@@ -15,6 +15,13 @@ module.exports = {
       if (validate(req, res) === false)
         return;
 
+      const previousItem = await getNewestTask(req.body.type);
+
+      if (isDuplicate(req.body, previousItem)) {
+        tools.sendDuplicateError(res, 'Duplicate request');
+        return;
+      }
+
       const { date, type, client, project, version, description, price, hours } = req.body;
 
       let clientId = null;
@@ -150,3 +157,71 @@ function validate(req, res) {
 
   return true;
 }
+
+function isDuplicate(item1, item2) {
+  tutaj
+  logger.info('tutaj');
+  if (item1 === null || item2 === null) {
+    return false;
+  }
+
+  if (new Date(item1.date).getTime() !== new Date(item2.date).getTime()) {
+    return false;
+  }
+
+  if (item1.type === taskType.priceBased
+    && item1.client.localeCompare(item2.client, undefined, { sensitivity: 'accent' }) !== 0) {
+    return false;
+  }
+
+  if (item1.project.localeCompare(item2.project, undefined, { sensitivity: 'accent' }) !== 0) {
+    return false;
+  }
+
+  if (item1.version.localeCompare(item2.version, undefined, { sensitivity: 'accent' }) !== 0) {
+    return false;
+  }
+
+  if (item1.description.localeCompare(item2.description, undefined, { sensitivity: 'accent' }) !== 0) {
+    return false;
+  }
+
+  if (item1.type === taskType.priceBased
+    && parseFloat(item1.price) !== parseFloat(item2.price)) {
+    return false;
+  }
+
+  if (item1.type === taskType.hoursBased
+    && parseFloat(item1.hours) !== parseFloat(item2.hours)) {
+    return false;
+  }
+
+
+  return true;
+}
+
+function getNewestTask(type) {
+  if (!type) return null;
+
+  return new Promise((resolve) => {
+    Task.findOne({
+      order: [['id', 'DESC']],
+      include: [{
+        model: Client,
+        as: 'client',
+        required: false
+      },{
+        model: Project,
+        as: 'project',
+        required: true
+      },],
+      where: {
+        type,
+      },
+    })
+    .then((item) => resolve(item))
+    .catch(() => null);
+  });
+}
+
+

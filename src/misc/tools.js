@@ -14,6 +14,12 @@ module.exports = {
       message: 'Nieprawidłowe dane wejściowe'
     });
   },
+  sendDuplicateError(res, error) {
+    logger.error(error);
+    res.status(409).send({
+      message: 'Wystąpił błąd: Duplikat\r\nZapis anulowany'
+    });
+  },
   sendAuthorizationError(res, error) {
     logger.error(error);
     res.status(401).send({

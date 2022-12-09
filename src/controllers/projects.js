@@ -37,7 +37,7 @@ module.exports = {
       attributes: [Sequelize.fn('distinct', Sequelize.col('name')) ,'name'],
       where: {
         [Op.and]: [
-          { taskType: req.query.taskType },
+          { taskType: req.query['task-type'] },
           { name: {
             [Op.like]: `%${req.query.filter}%`
           } }
