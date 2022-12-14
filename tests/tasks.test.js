@@ -220,34 +220,6 @@ describe('POST /tasks', () => {
   });
 });
 
-//Test GET /tasks/projects/distinct
-describe('GET /projects/names/distinct', () => {
-  beforeEach(() => {
-    process.env.NODE_ENV = 'development';
-  });
-
-  describe('valid data', () => {
-    it('responds with 200 status code', async () => {
-      const response = await request(app)
-        .get('/projects/names/distinct');
-
-      //console.log(response.body);
-      expect(response.statusCode).toBe(200);
-    });
-
-    it('response body is array', async () => {
-      const response = await request(app)
-        .get('/projects/names/distinct')
-        .query({
-          'task-type': 1,
-          filter: 'p'
-        });
-
-      expect(Array.isArray(response.body)).toBeTruthy();
-    });
-  });
-});
-
 //Test GET /tasks/newest
 describe('GET /tasks/newest', () => {
   beforeEach(() => {
@@ -270,6 +242,17 @@ describe('GET /tasks/newest', () => {
         .query({ type: 1 });
 
       expect(response.body.date).toBeDefined();
+    });
+  });
+
+  describe('invalid data', () => {
+    it('responds with 500 status code', async () => {
+      const response = await request(app)
+        .get('/tasks/newest')
+        .query({ type: null });
+
+      //console.log(response.body);
+      expect(response.statusCode).toBe(500);
     });
   });
 });

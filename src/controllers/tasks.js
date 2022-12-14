@@ -6,6 +6,7 @@ const {Project} = require('../models');
 const tools = require('../misc/tools');
 const {logger} = require('../misc/logger');
 const taskType = require('../enums/taskType');
+const moment = require('moment');
 
 module.exports = {
   async create (req, res) {
@@ -22,7 +23,8 @@ module.exports = {
         return;
       }
 
-      const { date, type, client, project, version, description, price, hours } = req.body;
+      let { date } = req.body;
+      const { type, client, project, version, description, price, hours } = req.body;
 
       let clientId = null;
       if (type === taskType.priceBased) {
@@ -38,6 +40,8 @@ module.exports = {
         tools.sendError(res, 'Project not found');
         return;
       }
+
+      date = moment(date).format('YYYY-MM-DD');
 
       Task.create({
         date,
@@ -61,53 +65,8 @@ module.exports = {
     }
   },
   async getNewest (req, res) {
-    if (!req.query.type) {
-      tools.sendError(res, 'Task type not defined');
-      return;
-    }
-
-    Task.findOne({
-      order: [['id', 'DESC']],
-      include: [{
-        model: Client,
-        as: 'client',
-        required: false
-      },{
-        model: Project,
-        as: 'project',
-        required: true
-      },],
-      where: {
-        type: req.query.type,
-      },
-    })
-    .then((item) => {
-      if (!item) {
-        tools.sendError(res, 'Item not found');
-        return;
-      }
-
-      if (item.type === taskType.priceBased) {
-        res.send({
-          date: item.date,
-          client: item.client.name,
-          project: item.project.name,
-          version: item.version,
-          description: item.description,
-          price: item.price,
-        });
-      }
-
-      if (item.type === taskType.hoursBased) {
-        res.send({
-          date: item.date,
-          project: item.project.name,
-          version: item.version,
-          description: item.description,
-          hours: item.hours
-        });
-      }
-    })
+    getNewestTask(req.query.type)
+    .then((item) => res.send(item))
     .catch((error) => tools.sendError(res, error));
   },
 }
@@ -159,8 +118,6 @@ function validate(req, res) {
 }
 
 function isDuplicate(item1, item2) {
-  tutaj
-  logger.info('tutaj');
   if (item1 === null || item2 === null) {
     return false;
   }
@@ -196,14 +153,13 @@ function isDuplicate(item1, item2) {
     return false;
   }
 
-
   return true;
 }
 
 function getNewestTask(type) {
-  if (!type) return null;
-
   return new Promise((resolve) => {
+    if (!type) throw new Error('Task type not defined');
+
     Task.findOne({
       order: [['id', 'DESC']],
       include: [{
@@ -219,8 +175,31 @@ function getNewestTask(type) {
         type,
       },
     })
-    .then((item) => resolve(item))
-    .catch(() => null);
+    .then((item) => {
+      if (!item) throw new Error('Item not found');
+
+      if (item.type === taskType.priceBased) {
+        resolve({
+          date: moment(item.date).format('YYYY-MM-DD'),
+          client: item.client.name,
+          project: item.project.name,
+          version: item.version,
+          description: item.description,
+          price: item.price,
+        });
+      }
+
+      if (item.type === taskType.hoursBased) {
+        resolve({
+          date: moment(item.date).format('YYYY-MM-DD'),
+          project: item.project.name,
+          version: item.version,
+          description: item.description,
+          hours: item.hours
+        });
+      }
+    })
+    .catch((error) => { throw error });
   });
 }
 
