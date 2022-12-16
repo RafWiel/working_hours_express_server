@@ -75,7 +75,7 @@ jest.mock('../src/models/task', () => () => {
   });
 
   task.$queryInterface.$useHandler(function(query) {
-    //console.log(options[0].where);
+    //console.log('QUERY:', query);
     if (query === 'findAll') {
       return task.build([
         {
@@ -97,7 +97,7 @@ jest.mock('../src/models/task', () => () => {
           hours: 1,
         }
       ]);
-    }
+    };
     if (query === 'findOne') {
       return task.build({
         date: '2022-11-30 12:00:00',
@@ -108,6 +108,28 @@ jest.mock('../src/models/task', () => () => {
         description: 'description',
         price: 1,
       });
+    };
+    if (query === 'select') {
+      return task.build([
+        {
+          date: '2022-11-30 12:00:00',
+          type: 1,
+          client: 'client 1',
+          project: 'project 1',
+          version: '1',
+          description: 'description',
+          price: 1,
+        },
+        {
+          date: '2022-11-30 12:00:00',
+          type: 2,
+          client: 'client 2',
+          project: 'project 2',
+          version: '2',
+          description: 'description',
+          hours: 1,
+        }
+      ]);
     }
   });
 
@@ -257,4 +279,34 @@ describe('GET /tasks/newest', () => {
   });
 });
 
+//Test GET /tasks
+describe('GET /tasks', () => {
+  beforeEach(() => {
+    process.env.NODE_ENV = 'development';
+  });
+
+  describe('valid data', () => {
+    it('responds with 200 status code', async () => {
+      const response = await request(app)
+        .get('/tasks');
+
+      //console.log(response.body);
+      expect(response.statusCode).toBe(200);
+    });
+
+    it('response has items defined', async () => {
+      const response = await request(app)
+        .get('/tasks');
+
+      expect(response.body.items).toBeDefined();
+    });
+
+    it('response items is array', async () => {
+      const response = await request(app)
+        .get('/tasks');
+
+      expect(Array.isArray(response.body.items)).toBeTruthy();
+    });
+  });
+});
 

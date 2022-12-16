@@ -7,6 +7,8 @@ const tools = require('../misc/tools');
 const {logger} = require('../misc/logger');
 const taskType = require('../enums/taskType');
 const moment = require('moment');
+const { QueryTypes } = require('sequelize');
+const {sequelize} = require('../models');
 
 module.exports = {
   async create (req, res) {
@@ -69,6 +71,46 @@ module.exports = {
     .then((item) => res.send(item))
     .catch((error) => tools.sendError(res, error));
   },
+  async get (req, res) {
+    try {
+      const page = req.query.page || 1;
+
+      console.log('query', req.query);
+
+      // run query
+      sequelize.query(`
+        select
+          t.id,
+          t.date,
+          t.type,
+          t.version,
+          t.description,
+          t.price,
+          t.hours,
+          c.name as client,
+          p.name as project
+        from Tasks t
+        left join Clients c on c.id = t.clientId
+        left join Projects p on p.id = t.projectId
+        limit 5
+        offset :offset
+      `, {
+        type: QueryTypes.SELECT,
+        replacements: {
+          offset: 5 * (page - 1),
+        },
+      })
+      .then((items) => {
+        res.send({
+          items,
+          meta: {
+            page: 1,
+          },
+        });
+      });
+    }
+    catch (error) { tools.sendError(res, error); }
+  },
 }
 
 function validate(req, res) {
@@ -122,7 +164,10 @@ function isDuplicate(item1, item2) {
     return false;
   }
 
-  if (new Date(item1.date).getTime() !== new Date(item2.date).getTime()) {
+  const date1 = moment(item1.date).format('YYYY-MM-DD');
+  const date2 = moment(item2.date).format('YYYY-MM-DD');
+
+  if (new Date(date1).getTime() !== new Date(date2).getTime()) {
     return false;
   }
 
@@ -180,7 +225,7 @@ function getNewestTask(type) {
 
       if (item.type === taskType.priceBased) {
         resolve({
-          date: moment(item.date).format('YYYY-MM-DD'),
+          date: item.date,
           client: item.client.name,
           project: item.project.name,
           version: item.version,
@@ -191,7 +236,7 @@ function getNewestTask(type) {
 
       if (item.type === taskType.hoursBased) {
         resolve({
-          date: moment(item.date).format('YYYY-MM-DD'),
+          date: item.date,
           project: item.project.name,
           version: item.version,
           description: item.description,
