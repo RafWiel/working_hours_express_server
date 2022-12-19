@@ -3,6 +3,6 @@ const authorizationMiddleware = require('../middlewares/authorization');
 
 module.exports = (app) => {
   app.post('/tasks', authorizationMiddleware.filter, tasks.create);
-  app.get('/tasks/newest', authorizationMiddleware.filter, tasks.getNewest);
+  app.get('/tasks/last', authorizationMiddleware.filter, tasks.getLast);
   app.get('/tasks', authorizationMiddleware.filter, tasks.get);
 }

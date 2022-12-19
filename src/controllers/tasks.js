@@ -18,7 +18,7 @@ module.exports = {
       if (validate(req, res) === false)
         return;
 
-      const previousItem = await getNewestTask(req.body.type);
+      const previousItem = await getLastTask(req.body.type);
 
       if (isDuplicate(req.body, previousItem)) {
         tools.sendDuplicateError(res, 'Duplicate request');
@@ -66,8 +66,8 @@ module.exports = {
       tools.sendError(res, error);
     }
   },
-  async getNewest (req, res) {
-    getNewestTask(req.query.type)
+  async getLast (req, res) {
+    getLastTask(req.query.type)
     .then((item) => res.send(item))
     .catch((error) => tools.sendError(res, error));
   },
@@ -92,17 +92,17 @@ module.exports = {
         from Tasks t
         left join Clients c on c.id = t.clientId
         left join Projects p on p.id = t.projectId
-        limit 5
+        limit 50
         offset :offset
       `, {
         type: QueryTypes.SELECT,
         replacements: {
-          offset: 5 * (page - 1),
+          offset: 50 * (page - 1),
         },
       })
-      .then((items) => {
+      .then((tasks) => {
         res.send({
-          items,
+          tasks,
           meta: {
             page: 1,
           },
@@ -201,7 +201,7 @@ function isDuplicate(item1, item2) {
   return true;
 }
 
-function getNewestTask(type) {
+function getLastTask(type) {
   return new Promise((resolve) => {
     if (!type) throw new Error('Task type not defined');
 

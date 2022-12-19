@@ -97,7 +97,7 @@ jest.mock('../src/models/task', () => () => {
           hours: 1,
         }
       ]);
-    };
+    }
     if (query === 'findOne') {
       return task.build({
         date: '2022-11-30 12:00:00',
@@ -108,28 +108,6 @@ jest.mock('../src/models/task', () => () => {
         description: 'description',
         price: 1,
       });
-    };
-    if (query === 'select') {
-      return task.build([
-        {
-          date: '2022-11-30 12:00:00',
-          type: 1,
-          client: 'client 1',
-          project: 'project 1',
-          version: '1',
-          description: 'description',
-          price: 1,
-        },
-        {
-          date: '2022-11-30 12:00:00',
-          type: 2,
-          client: 'client 2',
-          project: 'project 2',
-          version: '2',
-          description: 'description',
-          hours: 1,
-        }
-      ]);
     }
   });
 
@@ -242,8 +220,8 @@ describe('POST /tasks', () => {
   });
 });
 
-//Test GET /tasks/newest
-describe('GET /tasks/newest', () => {
+//Test GET /tasks/last
+describe('GET /tasks/last', () => {
   beforeEach(() => {
     process.env.NODE_ENV = 'development';
   });
@@ -251,7 +229,7 @@ describe('GET /tasks/newest', () => {
   describe('valid data', () => {
     it('responds with 200 status code', async () => {
       const response = await request(app)
-        .get('/tasks/newest')
+        .get('/tasks/last')
         .query({ type: 1 });
 
       //console.log(response.body);
@@ -260,7 +238,7 @@ describe('GET /tasks/newest', () => {
 
     it('response has date defined', async () => {
       const response = await request(app)
-        .get('/tasks/newest')
+        .get('/tasks/last')
         .query({ type: 1 });
 
       expect(response.body.date).toBeDefined();
@@ -270,7 +248,7 @@ describe('GET /tasks/newest', () => {
   describe('invalid data', () => {
     it('responds with 500 status code', async () => {
       const response = await request(app)
-        .get('/tasks/newest')
+        .get('/tasks/last')
         .query({ type: null });
 
       //console.log(response.body);
@@ -280,33 +258,33 @@ describe('GET /tasks/newest', () => {
 });
 
 //Test GET /tasks
-describe('GET /tasks', () => {
-  beforeEach(() => {
-    process.env.NODE_ENV = 'development';
-  });
+// describe('GET /tasks', () => {
+//   beforeEach(() => {
+//     process.env.NODE_ENV = 'development';
+//   });
 
-  describe('valid data', () => {
-    it('responds with 200 status code', async () => {
-      const response = await request(app)
-        .get('/tasks');
+//   describe('valid data', () => {
+//     it('responds with 200 status code', async () => {
+//       const response = await request(app)
+//         .get('/tasks');
 
-      //console.log(response.body);
-      expect(response.statusCode).toBe(200);
-    });
+//       //console.log(response.body);
+//       expect(response.statusCode).toBe(200);
+//     });
 
-    it('response has items defined', async () => {
-      const response = await request(app)
-        .get('/tasks');
+//     it('response has items defined', async () => {
+//       const response = await request(app)
+//         .get('/tasks');
 
-      expect(response.body.items).toBeDefined();
-    });
+//       expect(response.body.items).toBeDefined();
+//     });
 
-    it('response items is array', async () => {
-      const response = await request(app)
-        .get('/tasks');
+//     it('response items is array', async () => {
+//       const response = await request(app)
+//         .get('/tasks');
 
-      expect(Array.isArray(response.body.items)).toBeTruthy();
-    });
-  });
-});
+//       expect(Array.isArray(response.body.items)).toBeTruthy();
+//     });
+//   });
+// });
 
