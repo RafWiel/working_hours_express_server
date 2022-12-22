@@ -20,12 +20,12 @@ module.exports = {
 
       const previousItem = await getLastTask(req.body.type);
 
-      if (isDuplicate(req.body, previousItem)) {
+      if (previousItem && isDuplicate(req.body, previousItem)) {
         tools.sendDuplicateError(res, 'Duplicate request');
         return;
       }
 
-      let { date } = req.body;
+      let { creationDate } = req.body;
       const { type, client, project, version, description, price, hours } = req.body;
 
       let clientId = null;
@@ -43,10 +43,10 @@ module.exports = {
         return;
       }
 
-      date = moment(date).format('YYYY-MM-DD');
+      creationDate = moment(creationDate).format('YYYY-MM-DD');
 
       Task.create({
-        date,
+        creationDate,
         type,
         clientId,
         projectId,
@@ -81,7 +81,8 @@ module.exports = {
       sequelize.query(`
         select
           t.id,
-          t.date,
+          t.creationDate,
+          t.settlementDate,
           t.type,
           t.version,
           t.description,
@@ -114,10 +115,10 @@ module.exports = {
 }
 
 function validate(req, res) {
-  const { date, type, client, project, version, description, price, hours } = req.body;
+  const { creationDate, type, client, project, version, description, price, hours } = req.body;
 
-  if (!date) {
-    tools.sendBadRequestError(res, 'Undefined parameter: date');
+  if (!creationDate) {
+    tools.sendBadRequestError(res, 'Undefined parameter: creationDate');
     return false;
   }
 
@@ -164,10 +165,10 @@ function isDuplicate(item1, item2) {
     return false;
   }
 
-  const date1 = moment(item1.date).format('YYYY-MM-DD');
-  const date2 = moment(item2.date).format('YYYY-MM-DD');
+  const creationDate1 = moment(item1.creationDate).format('YYYY-MM-DD');
+  const creationDate2 = moment(item2.creationDate).format('YYYY-MM-DD');
 
-  if (new Date(date1).getTime() !== new Date(date2).getTime()) {
+  if (new Date(creationDate1).getTime() !== new Date(creationDate2).getTime()) {
     return false;
   }
 
@@ -202,8 +203,8 @@ function isDuplicate(item1, item2) {
 }
 
 function getLastTask(type) {
-  return new Promise((resolve) => {
-    if (!type) throw new Error('Task type not defined');
+  return new Promise((resolve, reject) => {
+    if (!type) reject(new Error('Task type not defined'));
 
     Task.findOne({
       order: [['id', 'DESC']],
@@ -221,11 +222,12 @@ function getLastTask(type) {
       },
     })
     .then((item) => {
-      if (!item) throw new Error('Item not found');
+      if (!item) resolve(null);
 
       if (item.type === taskType.priceBased) {
         resolve({
-          date: item.date,
+          creationDate: item.creationDate,
+          settlementDate: item.settlementDate,
           client: item.client.name,
           project: item.project.name,
           version: item.version,
@@ -236,7 +238,8 @@ function getLastTask(type) {
 
       if (item.type === taskType.hoursBased) {
         resolve({
-          date: item.date,
+          creationDate: item.creationDate,
+          settlementDate: item.settlementDate,
           project: item.project.name,
           version: item.version,
           description: item.description,
@@ -244,7 +247,7 @@ function getLastTask(type) {
         });
       }
     })
-    .catch((error) => { throw error });
+    .catch((error) => { reject(error) });
   });
 }
 

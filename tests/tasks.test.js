@@ -57,7 +57,7 @@ jest.mock('../src/models/task', () => () => {
   const dbMock = new SequelizeMock();
 
   const task =  dbMock.define('Task',  {
-    date: '2022-11-30 12:00:00',
+    creationDate: '2022-11-30 12:00:00',
     type: 1,
     clientId: 1,
     projectId: 1,
@@ -79,7 +79,7 @@ jest.mock('../src/models/task', () => () => {
     if (query === 'findAll') {
       return task.build([
         {
-          date: '2022-11-30 12:00:00',
+          creationDate: '2022-11-30 12:00:00',
           type: 1,
           client: 'client 1',
           project: 'project 1',
@@ -88,7 +88,7 @@ jest.mock('../src/models/task', () => () => {
           price: 1,
         },
         {
-          date: '2022-11-30 12:00:00',
+          creationDate: '2022-11-30 12:00:00',
           type: 2,
           client: 'client 2',
           project: 'project 2',
@@ -100,7 +100,7 @@ jest.mock('../src/models/task', () => () => {
     }
     if (query === 'findOne') {
       return task.build({
-        date: '2022-11-30 12:00:00',
+        creationDate: '2022-11-30 12:00:00',
         type: 1,
         client: 'client 1',
         project: 'project 1',
@@ -115,7 +115,7 @@ jest.mock('../src/models/task', () => () => {
 });
 
 const task = {
-  date: '2022-11-30 12:00:00',
+  creationDate: '2022-11-30 12:00:00',
   type: 1,
   client: 'client',
   project: 'project',
@@ -236,12 +236,12 @@ describe('GET /tasks/last', () => {
       expect(response.statusCode).toBe(200);
     });
 
-    it('response has date defined', async () => {
+    it('response has creationDate defined', async () => {
       const response = await request(app)
         .get('/tasks/last')
         .query({ type: 1 });
 
-      expect(response.body.date).toBeDefined();
+      expect(response.body.creationDate).toBeDefined();
     });
   });
 

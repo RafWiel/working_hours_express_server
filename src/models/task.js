@@ -1,8 +1,12 @@
 module.exports = (sequelize, DataTypes) =>
   sequelize.define('Task', {
-    date: {
+    creationDate: {
       type: DataTypes.DATE,
       allowNull: false
+    },
+    settlementDate: {
+      type: DataTypes.DATE,
+      allowNull: true
     },
     type: {
       type: DataTypes.TINYINT,
