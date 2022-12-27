@@ -112,6 +112,32 @@ module.exports = {
     }
     catch (error) { tools.sendError(res, error); }
   },
+  async settle (req, res) {
+    try {
+      logger.info(req.body);
+
+      const { idArray } = req.body;
+
+      let { settlementDate } = req.body;
+      settlementDate = moment(settlementDate).format('YYYY-MM-DD');
+
+      Task.update({
+        settlementDate,
+      }, {
+        where: {
+          id: idArray,
+        },
+      }
+      )
+      .then(async () => {
+        res.status(200).send();
+      })
+      .catch((error) => tools.sendError(res, error));
+    }
+    catch (error) {
+      tools.sendError(res, error);
+    }
+  },
 }
 
 function validate(req, res) {
