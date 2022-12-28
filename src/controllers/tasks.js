@@ -117,8 +117,18 @@ module.exports = {
       logger.info(req.body);
 
       const { idArray } = req.body;
-
       let { settlementDate } = req.body;
+
+      if (!idArray || idArray.length == 0) {
+        tools.sendBadRequestError(res, 'Undefined parameter: idArray');
+        return;
+      }
+
+      if (!settlementDate) {
+        tools.sendBadRequestError(res, 'Undefined parameter: settlementDate');
+        return;
+      }
+
       settlementDate = moment(settlementDate).format('YYYY-MM-DD');
 
       Task.update({

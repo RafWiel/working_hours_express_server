@@ -124,6 +124,15 @@ const task = {
   price: 1,
 };
 
+const settlement = {
+  idArray: [
+    1,
+    2,
+    3
+  ],
+  settlementDate: '2022-12-28',
+};
+
 //Test POST /tasks
 describe('POST /tasks', () => {
   beforeEach(() => {
@@ -253,6 +262,63 @@ describe('GET /tasks/last', () => {
 
       //console.log(response.body);
       expect(response.statusCode).toBe(500);
+    });
+  });
+});
+
+//Test POST /tasks/settle
+describe('POST /tasks/settle', () => {
+  beforeEach(() => {
+    process.env.NODE_ENV = 'development';
+  });
+
+  describe('valid data', () => {
+    it('responds with 200 status code', async () => {
+      const response = await request(app)
+        .post('/tasks/settle')
+        .send(settlement);
+
+      expect(response.statusCode).toBe(200);
+    });
+  });
+
+  describe('invalid data', () => {
+    const bodyArray = [
+      {
+        idArray: null,
+        settlementDate: '2022-12-28',
+      },
+      {
+        idArray: [
+        ],
+        settlementDate: '2022-12-28',
+      },
+      {
+        idArray: [
+          1,
+          2,
+          3
+        ],
+        settlementDate: null,
+      },
+      {
+        idArray: [
+          1,
+          2,
+          3
+        ],
+        settlementDate: '',
+      },
+    ]
+
+    bodyArray.forEach(async (item) => {
+      it('responds with 400 status code', async () => {
+        const response = await request(app)
+          .post('/tasks/settle')
+          .send(item);
+
+        expect(response.statusCode).toBe(400);
+      });
     });
   });
 });
