@@ -9,6 +9,7 @@ const taskType = require('../enums/taskType');
 const moment = require('moment');
 const { QueryTypes } = require('sequelize');
 const {sequelize} = require('../models');
+const sortOrder = require('../enums/sortOrder');
 
 module.exports = {
   async create (req, res) {
@@ -73,9 +74,13 @@ module.exports = {
   },
   async get (req, res) {
     try {
+      console.log('query', req.query);
+
       const page = req.query.page || 1;
 
-      console.log('query', req.query);
+      // sorting columns
+      const sortColumn = req.query['sort-column'] ? req.query['sort-column'] : 'creationDate';
+      const order = sortOrder.getSqlKeyword(req.query['sort-order']);
 
       // run query
       sequelize.query(`
@@ -93,6 +98,7 @@ module.exports = {
         from Tasks t
         left join Clients c on c.id = t.clientId
         left join Projects p on p.id = t.projectId
+        order by ${sortColumn} ${order}
         limit 50
         offset :offset
       `, {
