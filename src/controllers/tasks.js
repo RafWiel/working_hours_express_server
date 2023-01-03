@@ -10,6 +10,7 @@ const moment = require('moment');
 const { QueryTypes } = require('sequelize');
 const {sequelize} = require('../models');
 const sortOrder = require('../enums/sortOrder');
+const timePeriod = require('../enums/timePeriod');
 
 module.exports = {
   async create (req, res) {
@@ -82,6 +83,43 @@ module.exports = {
       const sortColumn = req.query['sort-column'] ? req.query['sort-column'] : 'creationDate';
       const order = sortOrder.getSqlKeyword(req.query['sort-order']);
 
+      // set filter date
+      let startDate = req.query['start-date'] ? req.query['start-date'] : null;
+      let stopDate = req.query['stop-date'] ? req.query['stop-date'] : null;
+      const now = new Date();
+
+      // set filter predefined date
+      switch(parseInt(req.query['time-period'])) {
+        case timePeriod.currentWeek:
+          startDate = moment(new Date(now.getFullYear(), now.getMonth(), now.getDate()))
+            .subtract(now.getDay() - 1, 'd')
+            .format('YYYY-MM-DD');
+          stopDate = moment(new Date(now.getFullYear(), now.getMonth(), now.getDate()))
+            .subtract(now.getDay() - 1, 'd')
+            .add(7, 'd')
+            .format('YYYY-MM-DD');
+          break;
+        case timePeriod.currentMonth:
+          startDate = moment(new Date(now.getFullYear(), now.getMonth(), 1))
+            .format('YYYY-MM-DD');
+          stopDate = moment(new Date(now.getFullYear(), now.getMonth(), 1))
+            .add(1, 'M')
+            .format('YYYY-MM-DD');
+          break;
+        case timePeriod.previousMonth:
+          startDate = moment(new Date(now.getFullYear(), now.getMonth(), 1))
+            .add(-1, 'M')
+            .format('YYYY-MM-DD');
+          stopDate = moment(new Date(now.getFullYear(), now.getMonth(), 1))
+            .format('YYYY-MM-DD');
+          break;
+        default:
+          break;
+      }
+
+      logger.info(startDate);
+      logger.info(stopDate);
+
       // run query
       sequelize.query(`
         select
@@ -98,12 +136,25 @@ module.exports = {
         from Tasks t
         left join Clients c on c.id = t.clientId
         left join Projects p on p.id = t.projectId
+        where (
+            t.version like :search or
+            t.description like :search or
+            c.name like :search or
+            p.name like :search
+          )
+          and case when :startDate is not null then t.creationDate >= :startDate else true end
+          and case when :stopDate is not null then t.creationDate < :stopDate else true end
+          and case when :type is not null then t.type = :type else true end
         order by ${sortColumn} ${order}
         limit 50
         offset :offset
       `, {
         type: QueryTypes.SELECT,
         replacements: {
+          search: req.query.search ? `%${req.query.search}%` : '%%',
+          startDate: startDate ? startDate : null,
+          stopDate: stopDate ? stopDate : null,
+          type: req.query.type && parseInt(req.query.type) !== taskType.all ? parseInt(req.query.type) : null,
           offset: 50 * (page - 1),
         },
       })
