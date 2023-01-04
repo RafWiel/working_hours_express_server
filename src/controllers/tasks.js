@@ -11,6 +11,7 @@ const { QueryTypes } = require('sequelize');
 const {sequelize} = require('../models');
 const sortOrder = require('../enums/sortOrder');
 const timePeriod = require('../enums/timePeriod');
+const settlementType = require('../enums/settlementType');
 
 module.exports = {
   async create (req, res) {
@@ -117,9 +118,6 @@ module.exports = {
           break;
       }
 
-      logger.info(startDate);
-      logger.info(stopDate);
-
       // run query
       sequelize.query(`
         select
@@ -142,9 +140,28 @@ module.exports = {
             c.name like :search or
             p.name like :search
           )
-          and case when :startDate is not null then t.creationDate >= :startDate else true end
-          and case when :stopDate is not null then t.creationDate < :stopDate else true end
-          and case when :type is not null then t.type = :type else true end
+          and
+            case when :startDate is not null then
+              t.creationDate >= :startDate
+            else true end
+          and
+            case when :stopDate is not null then
+              t.creationDate < :stopDate
+            else true end
+          and
+            case when :taskType is not null then
+              t.type = :taskType
+            else true end
+          and
+            case when :settlementType is not null then
+              case when :settlementType = :settled then
+                t.settlementDate is not null
+              else
+                case when :settlementType = :unsettled then
+                  t.settlementDate is null
+                end
+              end
+            else true end
         order by ${sortColumn} ${order}
         limit 50
         offset :offset
@@ -154,7 +171,10 @@ module.exports = {
           search: req.query.search ? `%${req.query.search}%` : '%%',
           startDate: startDate ? startDate : null,
           stopDate: stopDate ? stopDate : null,
-          type: req.query.type && parseInt(req.query.type) !== taskType.all ? parseInt(req.query.type) : null,
+          taskType: req.query['task-type'] && parseInt(req.query['task-type']) !== taskType.all ? parseInt(req.query['task-type']) : null,
+          settlementType: req.query['settlement-type'] && parseInt(req.query['settlement-type']) !== settlementType.all ? parseInt(req.query['settlement-type']) : null,
+          settled: settlementType.settled,
+          unsettled: settlementType.unsettled,
           offset: 50 * (page - 1),
         },
       })
