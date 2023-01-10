@@ -11,7 +11,8 @@ sequelize.sync({force: isReset})
   app.listen(config.port, () => {
     logger.info(message);
   });
-});
+})
+.catch((error) => logger.error(error));
 
 app.get('/', (req, res) => {
   res.send(message);
