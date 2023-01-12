@@ -33,6 +33,11 @@ module.exports = {
     return null;
   },
   async getNamesDistinct (req, res) {
+    if (!req.query['task-type']) {
+      tools.sendBadRequestError(res, 'Undefined parameter: task-type');
+      return;
+    }
+
     Project.findAll({
       attributes: [Sequelize.fn('distinct', Sequelize.col('name')) ,'name'],
       where: {
