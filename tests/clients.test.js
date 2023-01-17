@@ -50,7 +50,7 @@ describe('GET /clients/names/distinct', () => {
   describe('valid data', () => {
     it('responds with 200 status code', async () => {
       const response = await request(app)
-        .get('/clients/names/distinct');
+        .get('/server/clients/names/distinct');
 
       //console.log(response.body);
       expect(response.statusCode).toBe(200);
@@ -58,7 +58,7 @@ describe('GET /clients/names/distinct', () => {
 
     it('response body is array', async () => {
       const response = await request(app)
-        .get('/clients/names/distinct')
+        .get('/server/clients/names/distinct')
         .query({ filter: 'j' });
 
       expect(Array.isArray(response.body)).toBeTruthy();

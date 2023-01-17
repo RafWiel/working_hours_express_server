@@ -17,7 +17,7 @@ jest.mock('../src/models/project', () => () => {
   const dbMock = new SequelizeMock();
 
   var project =  dbMock.define('Project',  {
-    taskType: 1,
+    'task-type': 1,
     name: 'project',
   });
 
@@ -50,7 +50,10 @@ describe('GET /projects/names/distinct', () => {
   describe('valid data', () => {
     it('responds with 200 status code', async () => {
       const response = await request(app)
-        .get('/projects/names/distinct');
+        .get('/server/projects/names/distinct')
+        .query({
+          'task-type': 1
+        });
 
       //console.log(response.body);
       expect(response.statusCode).toBe(200);
@@ -58,9 +61,9 @@ describe('GET /projects/names/distinct', () => {
 
     it('response body is array', async () => {
       const response = await request(app)
-        .get('/projects/names/distinct')
+        .get('/server/projects/names/distinct')
         .query({
-          taskType: 1,
+          'task-type': 1,
           filter: 'i'
         });
 

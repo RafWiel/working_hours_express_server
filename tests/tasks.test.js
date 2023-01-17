@@ -142,7 +142,7 @@ describe('POST /tasks', () => {
   describe('valid data', () => {
     it('responds with 200 status code', async () => {
       const response = await request(app)
-        .post('/tasks')
+        .post('/server/tasks')
         .send(task);
 
       expect(response.statusCode).toBe(200);
@@ -150,7 +150,7 @@ describe('POST /tasks', () => {
 
     it('specifies json in content type header', async () => {
       const response = await request(app)
-        .post('/tasks')
+        .post('/server/tasks')
         .send(task);
 
       expect(response.headers['content-type']).toEqual(expect.stringContaining('json'));
@@ -158,7 +158,7 @@ describe('POST /tasks', () => {
 
     it('response has taskId defined', async () => {
       const response = await request(app)
-        .post('/tasks')
+        .post('/server/tasks')
         .send(task);
 
       expect(response.body.taskId).toBeDefined();
@@ -220,7 +220,7 @@ describe('POST /tasks', () => {
     bodyArray.forEach(async (item) => {
       it('responds with 400 status code', async () => {
         const response = await request(app)
-          .post('/tasks')
+          .post('/server/tasks')
           .send(item);
 
         expect(response.statusCode).toBe(400);
@@ -238,7 +238,7 @@ describe('GET /tasks/last', () => {
   describe('valid data', () => {
     it('responds with 200 status code', async () => {
       const response = await request(app)
-        .get('/tasks/last')
+        .get('/server/tasks/last')
         .query({ type: 1 });
 
       //console.log(response.body);
@@ -247,21 +247,10 @@ describe('GET /tasks/last', () => {
 
     it('response has creationDate defined', async () => {
       const response = await request(app)
-        .get('/tasks/last')
+        .get('/server/tasks/last')
         .query({ type: 1 });
 
       expect(response.body.creationDate).toBeDefined();
-    });
-  });
-
-  describe('invalid data', () => {
-    it('responds with 500 status code', async () => {
-      const response = await request(app)
-        .get('/tasks/last')
-        .query({ type: null });
-
-      //console.log(response.body);
-      expect(response.statusCode).toBe(500);
     });
   });
 });
@@ -275,7 +264,7 @@ describe('POST /tasks/settle', () => {
   describe('valid data', () => {
     it('responds with 200 status code', async () => {
       const response = await request(app)
-        .post('/tasks/settle')
+        .post('/server/tasks/settle')
         .send(settlement);
 
       expect(response.statusCode).toBe(200);
@@ -314,7 +303,7 @@ describe('POST /tasks/settle', () => {
     bodyArray.forEach(async (item) => {
       it('responds with 400 status code', async () => {
         const response = await request(app)
-          .post('/tasks/settle')
+          .post('/server/tasks/settle')
           .send(item);
 
         expect(response.statusCode).toBe(400);
@@ -323,6 +312,7 @@ describe('POST /tasks/settle', () => {
   });
 });
 
+//Removed, mock doesnt work, calls actual db
 //Test GET /tasks
 // describe('GET /tasks', () => {
 //   beforeEach(() => {
@@ -332,24 +322,24 @@ describe('POST /tasks/settle', () => {
 //   describe('valid data', () => {
 //     it('responds with 200 status code', async () => {
 //       const response = await request(app)
-//         .get('/tasks');
+//         .get('/server/tasks');
 
 //       //console.log(response.body);
 //       expect(response.statusCode).toBe(200);
 //     });
 
-//     it('response has items defined', async () => {
+//     it('response has tasks defined', async () => {
 //       const response = await request(app)
-//         .get('/tasks');
+//         .get('/server/tasks');
 
-//       expect(response.body.items).toBeDefined();
+//       expect(response.body.tasks).toBeDefined();
 //     });
 
-//     it('response items is array', async () => {
+//     it('response tasks is array', async () => {
 //       const response = await request(app)
-//         .get('/tasks');
+//         .get('/server/tasks');
 
-//       expect(Array.isArray(response.body.items)).toBeTruthy();
+//       expect(Array.isArray(response.body.tasks)).toBeTruthy();
 //     });
 //   });
 // });

@@ -76,7 +76,7 @@ module.exports = {
   },
   async get (req, res) {
     try {
-      console.log('query', req.query);
+      //console.log('query', req.query);
 
       const page = req.query.page || 1;
 
