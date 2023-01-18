@@ -56,6 +56,7 @@ module.exports = {
       // run query
       sequelize.query(`
         select
+          c.id as id,
           c.name as client,
           sum(t.price) as amount
         from Clients c
