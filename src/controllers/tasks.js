@@ -162,6 +162,10 @@ module.exports = {
                 end
               end
             else true end
+          and
+            case when :clientId is not null then
+              c.id = :clientId
+            else true end
         order by ${sortColumn} ${order}
         limit 50
         offset :offset
@@ -175,6 +179,7 @@ module.exports = {
           settlementType: req.query['settlement-type'] && parseInt(req.query['settlement-type']) !== settlementType.all ? parseInt(req.query['settlement-type']) : null,
           settled: settlementType.settled,
           unsettled: settlementType.unsettled,
+          clientId: req.query['client-id'] ? parseInt(req.query['client-id']) : null,
           offset: 50 * (page - 1),
         },
       })
