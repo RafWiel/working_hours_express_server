@@ -7,7 +7,7 @@ const tools = require('../misc/tools');
 const {logger} = require('../misc/logger');
 const taskType = require('../enums/taskType');
 const moment = require('moment');
-const { QueryTypes } = require('sequelize');
+const { QueryTypes, Op } = require('sequelize');
 const {sequelize} = require('../models');
 const sortOrder = require('../enums/sortOrder');
 const timePeriod = require('../enums/timePeriod');
@@ -217,7 +217,14 @@ module.exports = {
         settlementDate,
       }, {
         where: {
-          id: idArray,
+          [Op.and]: [
+            { id: idArray },
+            {
+              settlementDate: {
+                [Op.eq]: null
+              }
+            }
+          ],
         },
       }
       )
@@ -225,6 +232,52 @@ module.exports = {
         res.status(200).send();
       })
       .catch((error) => tools.sendError(res, error));
+    }
+    catch (error) {
+      tools.sendError(res, error);
+    }
+  },
+  async getOne (req, res) {
+    try {
+
+      logger.info(Number.isInteger(parseInt(req.params.id)));
+
+      if (!req.params.id || !Number.isInteger(parseInt(req.params.id))) {
+        tools.sendBadRequestError(res, 'id not defined');
+        return;
+      }
+
+      Task.findOne({
+        include: [{
+          model: Client,
+          as: 'client',
+          required: false
+        },{
+          model: Project,
+          as: 'project',
+          required: true
+        },],
+        where: {
+          id: req.params.id,
+        },
+      })
+      .then((task) => {
+        if (!task) tools.sendError(res, 'Task not found');
+
+        res.send({
+          id: task.id,
+          creationDate: task.creationDate,
+          settlementDate: task.settlementDate,
+          type: task.type,
+          version: task.version,
+          description: task.description,
+          price: task.price,
+          hours: task.hours,
+          client: task.client.name,
+          project: task.project.name
+        });
+      })
+      .catch((error) => { tools.sendError(res, error) });
     }
     catch (error) {
       tools.sendError(res, error);
@@ -339,29 +392,29 @@ function getLastTask(type) {
         type,
       },
     })
-    .then((item) => {
-      if (!item) resolve(null);
+    .then((task) => {
+      if (!task) resolve(null);
 
-      if (item.type === taskType.priceBased) {
+      if (task.type === taskType.priceBased) {
         resolve({
-          creationDate: item.creationDate,
-          settlementDate: item.settlementDate,
-          client: item.client.name,
-          project: item.project.name,
-          version: item.version,
-          description: item.description,
-          price: item.price,
+          creationDate: task.creationDate,
+          settlementDate: task.settlementDate,
+          client: task.client.name,
+          project: task.project.name,
+          version: task.version,
+          description: task.description,
+          price: task.price,
         });
       }
 
-      if (item.type === taskType.hoursBased) {
+      if (task.type === taskType.hoursBased) {
         resolve({
-          creationDate: item.creationDate,
-          settlementDate: item.settlementDate,
-          project: item.project.name,
-          version: item.version,
-          description: item.description,
-          hours: item.hours
+          creationDate: task.creationDate,
+          settlementDate: task.settlementDate,
+          project: task.project.name,
+          version: task.version,
+          description: task.description,
+          hours: task.hours
         });
       }
     })

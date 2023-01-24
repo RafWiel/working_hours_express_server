@@ -312,6 +312,40 @@ describe('POST /tasks/settle', () => {
   });
 });
 
+//Test GET /tasks/:id
+describe('GET /tasks/:id', () => {
+  beforeEach(() => {
+    process.env.NODE_ENV = 'development';
+  });
+
+  describe('valid data', () => {
+    it('responds with 200 status code', async () => {
+      const response = await request(app)
+        .get('/server/tasks/1');
+
+      //console.log(response.body);
+      expect(response.statusCode).toBe(200);
+    });
+
+    it('response has creationDate defined', async () => {
+      const response = await request(app)
+        .get('/server/tasks/1');
+
+      expect(response.body.creationDate).toBeDefined();
+    });
+  });
+
+  describe('invalid data', () => {
+    it('responds with 400 status code', async () => {
+      const response = await request(app)
+        .get('/server/tasks/x');
+
+      //console.log(response.body);
+      expect(response.statusCode).toBe(400);
+    });
+  });
+});
+
 //Removed, mock doesnt work, calls actual db
 //Test GET /tasks
 // describe('GET /tasks', () => {
