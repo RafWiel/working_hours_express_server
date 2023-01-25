@@ -240,7 +240,7 @@ module.exports = {
   async getOne (req, res) {
     try {
 
-      logger.info(Number.isInteger(parseInt(req.params.id)));
+      logger.info(req.params.id);
 
       if (!req.params.id || !Number.isInteger(parseInt(req.params.id))) {
         tools.sendBadRequestError(res, 'id not defined');
@@ -273,8 +273,8 @@ module.exports = {
           description: task.description,
           price: task.price,
           hours: task.hours,
-          client: task.client.name,
-          project: task.project.name
+          client: task.client != null ? task.client.name : null,
+          project: task.project != null ? task.project.name : null,
         });
       })
       .catch((error) => { tools.sendError(res, error) });
