@@ -176,7 +176,7 @@ describe('POST /tasks', () => {
         price: 1,
       },
       {
-        date: '2022-11-30 12:00:00',
+        creationDate: '2022-11-30 12:00:00',
         type: 1,
         project: 'project',
         version: '1',
@@ -184,7 +184,7 @@ describe('POST /tasks', () => {
         price: 1,
       },
       {
-        date: '2022-11-30 12:00:00',
+        creationDate: '2022-11-30 12:00:00',
         type: 1,
         client: 'client',
         version: '1',
@@ -192,7 +192,7 @@ describe('POST /tasks', () => {
         price: 1,
       },
       {
-        date: '2022-11-30 12:00:00',
+        creationDate: '2022-11-30 12:00:00',
         type: 1,
         client: 'client',
         project: 'project',
@@ -200,7 +200,7 @@ describe('POST /tasks', () => {
         price: 1,
       },
       {
-        date: '2022-11-30 12:00:00',
+        creationDate: '2022-11-30 12:00:00',
         type: 1,
         client: 'client',
         project: 'project',
@@ -208,7 +208,7 @@ describe('POST /tasks', () => {
         description: 'description'
       },
       {
-        date: '2022-11-30 12:00:00',
+        creationDate: '2022-11-30 12:00:00',
         type: 1,
         client: 'client',
         project: 'project',
@@ -221,6 +221,86 @@ describe('POST /tasks', () => {
       it('responds with 400 status code', async () => {
         const response = await request(app)
           .post('/server/tasks')
+          .send(item);
+
+        expect(response.statusCode).toBe(400);
+      });
+    });
+  });
+});
+
+//Test PUT /tasks
+describe('PUT /tasks', () => {
+  beforeEach(() => {
+    process.env.NODE_ENV = 'development';
+  });
+
+  describe('valid data', () => {
+    it('responds with 200 status code', async () => {
+      const response = await request(app)
+        .put('/server/tasks')
+        .send(task);
+
+      expect(response.statusCode).toBe(200);
+    });
+  });
+
+  describe('invalid data', () => {
+    const bodyArray = [
+      {
+        type: 1,
+        client: 'client',
+        project: 'project',
+        version: '1',
+        description: 'description',
+        price: 1,
+      },
+      {
+        creationDate: '2022-11-30 12:00:00',
+        type: 1,
+        project: 'project',
+        version: '1',
+        description: 'description',
+        price: 1,
+      },
+      {
+        creationDate: '2022-11-30 12:00:00',
+        type: 1,
+        client: 'client',
+        version: '1',
+        description: 'description',
+        price: 1,
+      },
+      {
+        creationDate: '2022-11-30 12:00:00',
+        type: 1,
+        client: 'client',
+        project: 'project',
+        description: 'description',
+        price: 1,
+      },
+      {
+        creationDate: '2022-11-30 12:00:00',
+        type: 1,
+        client: 'client',
+        project: 'project',
+        version: '1',
+        description: 'description'
+      },
+      {
+        creationDate: '2022-11-30 12:00:00',
+        type: 1,
+        client: 'client',
+        project: 'project',
+        version: '1',
+        price: 1,
+      },
+    ]
+
+    bodyArray.forEach(async (item) => {
+      it('responds with 400 status code', async () => {
+        const response = await request(app)
+          .put('/server/tasks')
           .send(item);
 
         expect(response.statusCode).toBe(400);

@@ -69,6 +69,54 @@ module.exports = {
       tools.sendError(res, error);
     }
   },
+  async update (req, res) {
+    try {
+      logger.info(req.body);
+
+      if (validate(req, res) === false)
+        return;
+
+      let { creationDate } = req.body;
+      const { id, type, client, project, version, description, price, hours } = req.body;
+
+      let clientId = null;
+      if (type === taskType.priceBased) {
+        clientId = await clients.getId(client);
+        if (!clientId) {
+          tools.sendError(res, 'Client not found');
+          return;
+        }
+      }
+
+      const projectId = await projects.getId(type, project);
+      if (!projectId) {
+        tools.sendError(res, 'Project not found');
+        return;
+      }
+
+      creationDate = moment(creationDate).format('YYYY-MM-DD');
+
+      Task.update({
+        creationDate,
+        type,
+        clientId,
+        projectId,
+        version,
+        description,
+        price,
+        hours
+      },{
+        where: { id }
+      })
+      .then(() => {
+        res.status(200).send();
+      })
+      .catch((error) => tools.sendError(res, error));
+    }
+    catch (error) {
+      tools.sendError(res, error);
+    }
+  },
   async getLast (req, res) {
     getLastTask(req.query.type)
     .then((item) => res.send(item))
