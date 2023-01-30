@@ -14,6 +14,12 @@ module.exports = {
       message: 'Nieprawidłowe dane wejściowe'
     });
   },
+  sendNotFoundError(res, error) {
+    logger.error(error);
+    res.status(404).send({
+      message: 'Nie znaleziono'
+    });
+  },
   sendDuplicateError(res, error) {
     logger.error(error);
     res.status(409).send({

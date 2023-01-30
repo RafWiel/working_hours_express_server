@@ -8,4 +8,5 @@ module.exports = (app) => {
   app.get(`/${process.env.URL_PATH}/tasks/:id`, authorizationMiddleware.filter, tasks.getOne);
   app.get(`/${process.env.URL_PATH}/tasks`, authorizationMiddleware.filter, tasks.get);
   app.post(`/${process.env.URL_PATH}/tasks/settle`, authorizationMiddleware.filter, tasks.settle);
+  app.delete(`/${process.env.URL_PATH}/tasks/:id`, authorizationMiddleware.filter, tasks.delete);
 }

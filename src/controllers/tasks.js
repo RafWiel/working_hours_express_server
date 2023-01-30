@@ -288,10 +288,10 @@ module.exports = {
   async getOne (req, res) {
     try {
 
-      logger.info(req.params.id);
+      const { id } = req.params;
 
-      if (!req.params.id || !Number.isInteger(parseInt(req.params.id))) {
-        tools.sendBadRequestError(res, 'id not defined');
+      if (!id || !Number.isInteger(parseInt(id))) {
+        tools.sendBadRequestError(res, 'Undefinded parameter: id');
         return;
       }
 
@@ -310,7 +310,10 @@ module.exports = {
         },
       })
       .then((task) => {
-        if (!task) tools.sendError(res, 'Task not found');
+        if (!task) {
+          tools.sendNotFoundError(res, 'Task not found');
+          return;
+        }
 
         res.send({
           id: task.id,
@@ -326,6 +329,29 @@ module.exports = {
         });
       })
       .catch((error) => { tools.sendError(res, error) });
+    }
+    catch (error) {
+      tools.sendError(res, error);
+    }
+  },
+  async delete (req, res) {
+    try {
+      logger.info(req.params);
+
+      const { id } = req.params;
+
+      if (!id || !Number.isInteger(parseInt(id))) {
+        tools.sendBadRequestError(res, 'Undefinded parameter: id');
+        return;
+      }
+
+      Task.destroy({
+        where: { id }
+      })
+      .then(async () => {
+        res.status(200).send();
+      })
+      .catch((error) => tools.sendError(res, error));
     }
     catch (error) {
       tools.sendError(res, error);
