@@ -32,13 +32,19 @@ module.exports = {
     return null;
   },
   async getNamesDistinct (req, res) {
-    Client.findAll({
-      attributes: [Sequelize.fn('distinct', Sequelize.col('name')) ,'name'],
-      where: {
+    let where = {};
+
+    if(req.query.filter) {
+      where = {
         name: {
           [Op.like]: `%${req.query.filter}%`
         }
-      }
+      };
+    }
+
+    Client.findAll({
+      attributes: [Sequelize.fn('distinct', Sequelize.col('name')) ,'name'],
+      where
     })
     .then((values) => res.send(values.map(u => u.name)))
     .catch((error) => tools.sendError(res, error));

@@ -3,13 +3,13 @@ const Joi = require('joi');
 module.exports = {
   create (req, res, next) {
     const schema = Joi.object({
-      userName: Joi.string(),
-      password: Joi.string().pattern(
+      userName: Joi.string().required(),
+      password: Joi.string().required().pattern(
         new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$/)
       ),
       firstName: Joi.string().allow(null, ''),
       lastName: Joi.string().allow(null, ''),
-      isAccountManager: Joi.boolean().allow(null, false),
+      type: Joi.number().required(),
     });
 
     const {error} = schema.validate(req.body);
@@ -18,16 +18,27 @@ module.exports = {
         case 'password':
           res.status(400).send({
             message: 'Hasło musi mieć minimum 8 znaków, wielką literę, cyfrę, oraz znak specjalny'
-          })
+          });
           break;
         default:
           res.status(400).send({
-            message: 'Nieprawidłowe dane',
+            message: 'Nieprawidłowe dane wejściowe',
             details: error.details[0].message
-          })
+          });
       }
-    } else {
-      next();
-    }
+    } else next();
+  },
+  isUniqueUserName (req, res, next) {
+    const schema = Joi.object({
+      userName: Joi.string().required(),
+    });
+
+    const {error} = schema.validate(req.body);
+    if (error) {
+      res.status(400).send({
+        message: 'Nieprawidłowe dane wejściowe',
+        details: error.details[0].message
+      });
+    } else next();
   },
 }

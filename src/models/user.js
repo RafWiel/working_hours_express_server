@@ -38,9 +38,9 @@ module.exports = (sequelize, DataTypes) => {
         return `${this.firstName}${space}${this.lastName}`;
       },
     },
-    isAccountManager: {
-      type: DataTypes.BOOLEAN,
-      allowNull: true
+    type: {
+      type: DataTypes.INTEGER,
+      allowNull: false
     },
   }, {
     timestamps: false,

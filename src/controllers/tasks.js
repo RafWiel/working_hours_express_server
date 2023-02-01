@@ -18,9 +18,6 @@ module.exports = {
     try {
       logger.info(req.body);
 
-      if (validate(req, res) === false)
-        return;
-
       const previousItem = await getLastTask(req.body.type);
 
       if (previousItem && isDuplicate(req.body, previousItem)) {
@@ -72,9 +69,6 @@ module.exports = {
   async update (req, res) {
     try {
       logger.info(req.body);
-
-      if (validate(req, res) === false)
-        return;
 
       let { creationDate } = req.body;
       const { id, type, client, project, version, description, price, hours } = req.body;
@@ -249,16 +243,6 @@ module.exports = {
       const { idArray } = req.body;
       let { settlementDate } = req.body;
 
-      if (!idArray || idArray.length == 0) {
-        tools.sendBadRequestError(res, 'Undefined parameter: idArray');
-        return;
-      }
-
-      if (!settlementDate) {
-        tools.sendBadRequestError(res, 'Undefined parameter: settlementDate');
-        return;
-      }
-
       settlementDate = moment(settlementDate).format('YYYY-MM-DD');
 
       Task.update({
@@ -287,13 +271,7 @@ module.exports = {
   },
   async getOne (req, res) {
     try {
-
       const { id } = req.params;
-
-      if (!id || !Number.isInteger(parseInt(id))) {
-        tools.sendBadRequestError(res, 'Undefinded parameter: id');
-        return;
-      }
 
       Task.findOne({
         include: [{
@@ -306,7 +284,7 @@ module.exports = {
           required: true
         },],
         where: {
-          id: req.params.id,
+          id,
         },
       })
       .then((task) => {
@@ -340,11 +318,6 @@ module.exports = {
 
       const { id } = req.params;
 
-      if (!id || !Number.isInteger(parseInt(id))) {
-        tools.sendBadRequestError(res, 'Undefinded parameter: id');
-        return;
-      }
-
       Task.destroy({
         where: { id }
       })
@@ -357,52 +330,6 @@ module.exports = {
       tools.sendError(res, error);
     }
   },
-}
-
-function validate(req, res) {
-  const { creationDate, type, client, project, version, description, price, hours } = req.body;
-
-  if (!creationDate) {
-    tools.sendBadRequestError(res, 'Undefined parameter: creationDate');
-    return false;
-  }
-
-  if (!type) {
-    tools.sendBadRequestError(res, 'Undefined parameter: type');
-    return false;
-  }
-
-  if (!client && type === taskType.priceBased) {
-    tools.sendBadRequestError(res, 'Undefined parameter: client');
-    return false;
-  }
-
-  if (!project) {
-    tools.sendBadRequestError(res, 'Undefined parameter: project');
-    return false;
-  }
-
-  if (!version) {
-    tools.sendBadRequestError(res, 'Undefined parameter: version');
-    return false;
-  }
-
-  if (!description) {
-    tools.sendBadRequestError(res, 'Undefined parameter: description');
-    return false;
-  }
-
-  if (!price && type === taskType.priceBased) {
-    tools.sendBadRequestError(res, 'Undefined parameter: price');
-    return false;
-  }
-
-  if (!hours && type === taskType.hoursBased) {
-    tools.sendBadRequestError(res, 'Undefined parameter: hours');
-    return false;
-  }
-
-  return true;
 }
 
 function isDuplicate(item1, item2) {

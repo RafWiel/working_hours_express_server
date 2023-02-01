@@ -1,12 +1,13 @@
-const tasks = require('../controllers/tasks');
-const authorizationMiddleware = require('../middlewares/authorization');
+const controller = require('../controllers/tasks');
+const authorization = require('../middlewares/authorization');
+const policy = require('../policies/tasks');
 
 module.exports = (app) => {
-  app.post(`/${process.env.URL_PATH}/tasks`, authorizationMiddleware.filter, tasks.create);
-  app.put(`/${process.env.URL_PATH}/tasks`, authorizationMiddleware.filter, tasks.update);
-  app.get(`/${process.env.URL_PATH}/tasks/last`, authorizationMiddleware.filter, tasks.getLast);
-  app.get(`/${process.env.URL_PATH}/tasks/:id`, authorizationMiddleware.filter, tasks.getOne);
-  app.get(`/${process.env.URL_PATH}/tasks`, authorizationMiddleware.filter, tasks.get);
-  app.post(`/${process.env.URL_PATH}/tasks/settle`, authorizationMiddleware.filter, tasks.settle);
-  app.delete(`/${process.env.URL_PATH}/tasks/:id`, authorizationMiddleware.filter, tasks.delete);
+  app.post(`/${process.env.URL_PATH}/tasks`, authorization.filter, policy.create, controller.create);
+  app.put(`/${process.env.URL_PATH}/tasks`, authorization.filter, policy.create, controller.update);
+  app.get(`/${process.env.URL_PATH}/tasks/last`, authorization.filter, policy.getLast, controller.getLast);
+  app.get(`/${process.env.URL_PATH}/tasks/:id`, authorization.filter, policy.getOne, controller.getOne);
+  app.get(`/${process.env.URL_PATH}/tasks`, authorization.filter, controller.get);
+  app.post(`/${process.env.URL_PATH}/tasks/settle`, authorization.filter, policy.settle, controller.settle);
+  app.delete(`/${process.env.URL_PATH}/tasks/:id`, authorization.filter, policy.getOne, controller.delete);
 }

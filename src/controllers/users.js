@@ -9,18 +9,17 @@ module.exports = {
     })
     .then((id) => {
       if (id === null) {
+        const {userName, password, firstName, lastName, type } = req.body;
+
         User.create({
-          userName: req.body.userName,
-          password: req.body.password,
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          isAccountManager: req.body.isAccountManager,
+          userName,
+          password,
+          firstName,
+          lastName,
+          type,
         })
         .then(() => {
-          res.send({
-            result: true,
-            // user, 
-          });
+          res.status(200).send();
         })
         .catch((error) => tools.sendError(res, error));
       }
