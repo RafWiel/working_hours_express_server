@@ -237,6 +237,8 @@ describe('PUT /tasks', () => {
 
   describe('valid data', () => {
     it('responds with 200 status code', async () => {
+      task.id = 1;
+
       const response = await request(app)
         .put('/server/tasks')
         .send(task);
@@ -248,6 +250,7 @@ describe('PUT /tasks', () => {
   describe('invalid data', () => {
     const bodyArray = [
       {
+        creationDate: '2022-11-30 12:00:00',
         type: 1,
         client: 'client',
         project: 'project',
@@ -256,6 +259,16 @@ describe('PUT /tasks', () => {
         price: 1,
       },
       {
+        id: 1,
+        type: 1,
+        client: 'client',
+        project: 'project',
+        version: '1',
+        description: 'description',
+        price: 1,
+      },
+      {
+        id: 1,
         creationDate: '2022-11-30 12:00:00',
         type: 1,
         project: 'project',
@@ -264,6 +277,7 @@ describe('PUT /tasks', () => {
         price: 1,
       },
       {
+        id: 1,
         creationDate: '2022-11-30 12:00:00',
         type: 1,
         client: 'client',
@@ -272,6 +286,7 @@ describe('PUT /tasks', () => {
         price: 1,
       },
       {
+        id: 1,
         creationDate: '2022-11-30 12:00:00',
         type: 1,
         client: 'client',
@@ -280,6 +295,7 @@ describe('PUT /tasks', () => {
         price: 1,
       },
       {
+        id: 1,
         creationDate: '2022-11-30 12:00:00',
         type: 1,
         client: 'client',
@@ -288,6 +304,7 @@ describe('PUT /tasks', () => {
         description: 'description'
       },
       {
+        id: 1,
         creationDate: '2022-11-30 12:00:00',
         type: 1,
         client: 'client',
@@ -359,11 +376,6 @@ describe('POST /tasks/settle', () => {
       },
       {
         idArray: [
-        ],
-        settlementDate: '2022-12-28',
-      },
-      {
-        idArray: [
           1,
           2,
           3
@@ -421,6 +433,33 @@ describe('GET /tasks/:id', () => {
         .get('/server/tasks/x');
 
       //console.log(response.body);
+      expect(response.statusCode).toBe(400);
+    });
+  });
+});
+
+//Test DELETE /tasks/:id
+describe('DELETE /tasks/:id', () => {
+  beforeEach(() => {
+    process.env.NODE_ENV = 'development';
+  });
+
+  describe('valid data', () => {
+    it('responds with 200 status code', async () => {
+      const response = await request(app)
+        .delete('/server/tasks/1')
+        .send();
+
+      expect(response.statusCode).toBe(200);
+    });
+  });
+
+  describe('invalid data', () => {
+    it('responds with 400 status code', async () => {
+      const response = await request(app)
+        .delete('/server/tasks/X')
+        .send();
+
       expect(response.statusCode).toBe(400);
     });
   });
