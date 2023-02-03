@@ -7,10 +7,6 @@ module.exports = {
   async login (req, res) {
     const {userName, password} = req.body;
 
-    if (!userName || !password) {
-      return tools.sendBadRequestError(res, 'UserName or password missing');
-    }
-
     // verify username
     var user = await User.findOne({
       where: { userName: userName }
@@ -35,7 +31,7 @@ module.exports = {
 
     res.send({
       token: token,
-      isAccountManager: Boolean(user.isAccountManager),
+      userType: user.type,
     });
   },
 }
