@@ -1,5 +1,5 @@
 const controller = require('../controllers/tasks');
-const authorization = require('../middlewares/authorization');
+const authorization = require('../middleware/authorization');
 const policy = require('../policies/tasks');
 
 module.exports = (app) => {

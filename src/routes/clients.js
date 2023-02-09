@@ -1,5 +1,5 @@
 const controller = require('../controllers/clients');
-const authorization = require('../middlewares/authorization');
+const authorization = require('../middleware/authorization');
 const policy = require('../policies/clients');
 
 module.exports = (app) => {
