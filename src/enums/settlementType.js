@@ -1,8 +1,10 @@
-const all = 0;
-const settled = 1;
-const unsettled = 2;
+const none = 0;
+const all = 1;
+const settled = 2;
+const unsettled = 3;
 
 module.exports = {
+  none,
   all,
   settled,
   unsettled,

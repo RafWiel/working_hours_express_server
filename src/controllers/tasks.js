@@ -118,7 +118,7 @@ module.exports = {
   },
   async get (req, res) {
     try {
-      //console.log('query', req.query);
+      console.log('query', req.query);
 
       const page = req.query.page || 1;
 
@@ -225,13 +225,25 @@ module.exports = {
           offset: 50 * (page - 1),
         },
       })
-      .then((tasks) => {
-        res.send({
+      .then(async (tasks) => {
+        const response = {
           tasks,
           meta: {
             page: 1,
           },
-        });
+        };
+
+        if (req.query['client-id']) {
+          const client = await Client.findOne({
+            where: {
+              id: parseInt(req.query['client-id']),
+            }
+          });
+
+          response.client = client.name;
+        }
+
+        res.send(response);
       });
     }
     catch (error) { tools.sendError(res, error); }
