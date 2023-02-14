@@ -5,13 +5,9 @@ module.exports = {
   ascending,
   descending,
   items: [
-    { id: ascending, text: 'Rosnąco', sqlKeyword: 'asc' },
-    { id: descending, text: 'Malejąco', sqlKeyword: 'desc' },
+    { id: ascending, sqlKeyword: 'asc' },
+    { id: descending, sqlKeyword: 'desc' },
   ],
-  getText(id) {
-    const item = this.items.find((u) => u.id === parseInt(id, 10));
-    return item ? item.text : '';
-  },
   getSqlKeyword(id) {
     const item = this.items.find((u) => u.id === parseInt(id, 10));
     return item ? item.sqlKeyword : 'asc';

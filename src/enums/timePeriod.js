@@ -8,14 +8,4 @@ module.exports = {
   currentWeek,
   currentMonth,
   previousMonth,
-  items: [
-    { id: all, text: 'Wszystkie' },
-    { id: currentWeek, text: 'Bieżący tydzień' },
-    { id: currentMonth, text: 'Bieżący miesiąc' },
-    { id: previousMonth, text: 'Poprzedni miesiąc' },
-  ],
-  getText(id) {
-    const item = this.items.find((u) => u.id === id);
-    return item ? item.text : '';
-  },
 };
