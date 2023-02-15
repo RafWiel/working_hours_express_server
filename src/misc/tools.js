@@ -5,37 +5,38 @@ module.exports = {
   sendError(res, error) {
     logger.error(error);
     res.status(500).send({
-      message: 'Błąd wewnętrzny serwera'
+      message: 'Internal server error'
     });
   },
   sendBadRequestError(res, error) {
     logger.error(error);
     res.status(400).send({
-      message: 'Nieprawidłowe dane wejściowe'
+      message: 'Incorrect input data'
     });
   },
   sendNotFoundError(res, error) {
     logger.error(error);
     res.status(404).send({
-      message: 'Nie znaleziono'
+      message: 'Not found'
     });
   },
   sendDuplicateError(res, error) {
     logger.error(error);
     res.status(409).send({
-      message: 'Wystąpił błąd: Duplikat\r\nZapis anulowany'
+      message: 'Duplicate data'
     });
   },
   sendAuthorizationError(res, error) {
     logger.error(error);
     res.status(401).send({
-      message: 'Błąd autoryzacji'
+      message: 'Authorization error'
     });
   },
   sendLoginError(res, error) {
     logger.error(error);
     res.status(401).send({
-      message: 'Nieprawidłowy użytkownik lub hasło'
+      code: 4011,
+      message: 'Incorrect username or password'
     });
   },
   getDir() {
