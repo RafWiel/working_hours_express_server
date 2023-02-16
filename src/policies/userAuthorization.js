@@ -3,7 +3,7 @@ const Joi = require('joi');
 module.exports = {
   login (req, res, next) {
     const schema = Joi.object({
-      userName: Joi.string().required(),
+      username: Joi.string().required(),
       password: Joi.string().required(),
     });
 

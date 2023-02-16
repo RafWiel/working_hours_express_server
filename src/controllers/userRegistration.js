@@ -5,14 +5,14 @@ module.exports = {
   create (req, res) {
     User.findOne({
       attributes: [ 'id' ],
-      where : { userName: req.body.userName }
+      where : { username: req.body.username }
     })
     .then((id) => {
       if (id === null) {
-        const {userName, password, firstName, lastName, type } = req.body;
+        const {username, password, firstName, lastName, type } = req.body;
 
         User.create({
-          userName,
+          username,
           password,
           firstName,
           lastName,
@@ -24,15 +24,15 @@ module.exports = {
         .catch((error) => tools.sendError(res, error));
       }
       else {
-        res.status(409).send({ message: `Użytkownik ${req.body.userName} jest już zarejestrowany`});
+        res.status(409).send({ message: `Użytkownik ${req.body.username} jest już zarejestrowany`});
       }
     })
     .catch((error) => tools.sendError(res, error));
   },
-  isUniqueUserName (req, res) {
+  isUniqueUsername (req, res) {
     User.findOne({
       attributes: [ 'id' ],
-      where : { userName: req.body.userName }
+      where : { username: req.body.username }
     })
     .then((id) => {
       res.send({

@@ -3,7 +3,7 @@ const Joi = require('joi');
 module.exports = {
   create (req, res, next) {
     const schema = Joi.object({
-      userName: Joi.string().required(),
+      username: Joi.string().required(),
       password: Joi.string().required().pattern(
         new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$/)
       ),
@@ -28,9 +28,9 @@ module.exports = {
       }
     } else next();
   },
-  isUniqueUserName (req, res, next) {
+  isUniqueUsername (req, res, next) {
     const schema = Joi.object({
-      userName: Joi.string().required(),
+      username: Joi.string().required(),
     });
 
     const {error} = schema.validate(req.body);

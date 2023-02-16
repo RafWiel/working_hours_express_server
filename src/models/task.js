@@ -29,11 +29,11 @@ module.exports = (sequelize, DataTypes) =>
       allowNull: true,
     },
     price: {
-      type: DataTypes.DECIMAL(6, 2),
+      type: DataTypes.DECIMAL(8, 2),
       allowNull: true
     },
     hours: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.INTEGER,
       allowNull: true
     },
   }, {

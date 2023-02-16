@@ -5,15 +5,15 @@ const {User} = require('../models');
 
 module.exports = {
   async login (req, res) {
-    const {userName, password} = req.body;
+    const {username, password} = req.body;
 
     // verify username
     var user = await User.findOne({
-      where: { userName: userName }
+      where: { username: username }
     });
 
     if (!user) {
-      return tools.sendLoginError(res, 'UserName not found');
+      return tools.sendLoginError(res, 'Username not found');
     }
 
     // verify password
