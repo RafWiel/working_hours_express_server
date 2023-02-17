@@ -17,12 +17,13 @@ module.exports = {
       switch (error.details[0].context.key) {
         case 'password':
           res.status(400).send({
-            message: 'Hasło musi mieć minimum 8 znaków, wielką literę, cyfrę, oraz znak specjalny'
+            code: 4001,
+            message: 'Password does not meet policy requirements'
           });
           break;
         default:
           res.status(400).send({
-            message: 'Nieprawidłowe dane wejściowe',
+            message: 'Incorrect input data',
             details: error.details[0].message
           });
       }
@@ -36,7 +37,7 @@ module.exports = {
     const {error} = schema.validate(req.body);
     if (error) {
       res.status(400).send({
-        message: 'Nieprawidłowe dane wejściowe',
+        message: 'Incorrect input data',
         details: error.details[0].message
       });
     } else next();

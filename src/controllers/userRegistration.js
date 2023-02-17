@@ -24,7 +24,10 @@ module.exports = {
         .catch((error) => tools.sendError(res, error));
       }
       else {
-        res.status(409).send({ message: `Użytkownik ${req.body.username} jest już zarejestrowany`});
+        res.status(409).send({
+          code: 4091,
+          message: 'User already registered'
+        });
       }
     })
     .catch((error) => tools.sendError(res, error));

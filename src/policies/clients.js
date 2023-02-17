@@ -9,7 +9,7 @@ module.exports = {
     const {error} = schema.validate(req.query);
     if (error) {
       res.status(400).send({
-        message: 'Nieprawidłowe dane wejściowe',
+        message: 'Incorrect input data',
         details: error.details[0].message
       });
     } else next();
