@@ -15,20 +15,20 @@ async function hashPassword (user) {
 module.exports = (sequelize, DataTypes) => {
   const user = sequelize.define('User', {
     username: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(32),
       allowNull: false,
       unique: true,
     },
     password: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(128),
       allowNull: false
     },
     firstName: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(32),
       allowNull: true
     },
     lastName: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(32),
       allowNull: true
     },
     name: {
@@ -41,6 +41,10 @@ module.exports = (sequelize, DataTypes) => {
     type: {
       type: DataTypes.INTEGER,
       allowNull: false
+    },
+    locale: {
+      type: DataTypes.STRING(2),
+      allowNull: true
     },
   }, {
     timestamps: false,

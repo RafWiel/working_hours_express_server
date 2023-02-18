@@ -1,6 +1,18 @@
 const Joi = require('joi');
 const taskType = require('../enums/taskType');
 
+function processError(req, res, schema) {
+  const {error} = schema.validate(req.body);
+    if (!error) return false;
+
+    res.status(400).send({
+      message: 'Incorrect input data',
+      details: error.details[0].message
+    });
+
+    return true;
+}
+
 module.exports = {
   create (req, res, next) {
     const schema = Joi.object({
@@ -14,13 +26,11 @@ module.exports = {
       hours: Joi.when('type', { is: taskType.hoursBased, then: Joi.number().required() }),
     });
 
-    const {error} = schema.validate(req.body);
-    if (error) {
-      res.status(400).send({
-        message: 'Incorrect input data',
-        details: error.details[0].message
-      });
-    } else next();
+    if (processError(req, res, schema)) {
+      return;
+    }
+
+    next();
   },
   update (req, res, next) {
     const schema = Joi.object({
@@ -36,39 +46,33 @@ module.exports = {
       hours: Joi.when('type', { is: taskType.hoursBased, then: Joi.number().required() }),
     });
 
-    const {error} = schema.validate(req.body);
-    if (error) {
-      res.status(400).send({
-        message: 'Incorrect input data',
-        details: error.details[0].message
-      });
-    } else next();
+    if (processError(req, res, schema)) {
+      return;
+    }
+
+    next();
   },
   getLast (req, res, next) {
     const schema = Joi.object({
       type: Joi.number().required(),
     });
 
-    const {error} = schema.validate(req.query);
-    if (error) {
-      res.status(400).send({
-        message: 'Incorrect input data',
-        details: error.details[0].message
-      });
-    } else next();
+    if (processError(req, res, schema)) {
+      return;
+    }
+
+    next();
   },
   getOne (req, res, next) {
     const schema = Joi.object({
       id: Joi.number().required(),
     });
 
-    const {error} = schema.validate(req.params);
-    if (error) {
-      res.status(400).send({
-        message: 'Incorrect input data',
-        details: error.details[0].message
-      });
-    } else next();
+    if (processError(req, res, schema)) {
+      return;
+    }
+
+    next();
   },
   settle (req, res, next) {
     const schema = Joi.object({
@@ -76,12 +80,10 @@ module.exports = {
       settlementDate: Joi.date().required(),
     });
 
-    const {error} = schema.validate(req.body);
-    if (error) {
-      res.status(400).send({
-        message: 'Incorrect input data',
-        details: error.details[0].message
-      });
-    } else next();
+    if (processError(req, res, schema)) {
+      return;
+    }
+
+    next();
   },
 }

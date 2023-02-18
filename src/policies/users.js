@@ -1,5 +1,17 @@
 const Joi = require('joi');
 
+function processError(req, res, schema) {
+  const {error} = schema.validate(req.body);
+    if (!error) return false;
+
+    res.status(400).send({
+      message: 'Incorrect input data',
+      details: error.details[0].message
+    });
+
+    return true;
+}
+
 module.exports = {
   create (req, res, next) {
     const schema = Joi.object({
@@ -34,12 +46,34 @@ module.exports = {
       username: Joi.string().required(),
     });
 
-    const {error} = schema.validate(req.body);
-    if (error) {
-      res.status(400).send({
-        message: 'Incorrect input data',
-        details: error.details[0].message
-      });
-    } else next();
+    if (processError(req, res, schema)) {
+      return;
+    }
+
+    next();
+  },
+  login (req, res, next) {
+    const schema = Joi.object({
+      username: Joi.string().required(),
+      password: Joi.string().required(),
+    });
+
+    if (processError(req, res, schema)) {
+      return;
+    }
+
+    next();
+  },
+  setLocale (req, res, next) {
+    const schema = Joi.object({
+      username: Joi.string().required(),
+      locale: Joi.string().required().pattern(new RegExp(/^[a-z]{2}$/)).allow(null),
+    });
+
+    if (processError(req, res, schema)) {
+      return;
+    }
+
+    next();
   },
 }
