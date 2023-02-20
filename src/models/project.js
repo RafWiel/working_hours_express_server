@@ -1,5 +1,9 @@
-module.exports = (sequelize, DataTypes) =>
-  sequelize.define('Project', {
+module.exports = (sequelize, DataTypes) => {
+  const Project = sequelize.define('Project', {
+    clientId: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
     taskType: {
       type: DataTypes.TINYINT,
       allowNull: false
@@ -13,3 +17,15 @@ module.exports = (sequelize, DataTypes) =>
     freezeTableName: true,
     tableName: 'Projects',
   });
+
+  Project.associate = function(models) {
+    Project.hasMany(models.Task, {
+      as: 'tasks',
+      foreignKey: 'projectId',
+      onDelete: 'cascade',
+      //hooks: true,
+    })
+  };
+
+  return Project;
+}

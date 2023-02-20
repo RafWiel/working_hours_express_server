@@ -37,7 +37,7 @@ module.exports = {
         }
       }
 
-      const projectId = await projects.getId(type, project);
+      const projectId = await projects.getId(clientId, type, project);
       if (!projectId) {
         tools.sendError(res, 'Project not found');
         return;
@@ -82,7 +82,7 @@ module.exports = {
         }
       }
 
-      const projectId = await projects.getId(type, project);
+      const projectId = await projects.getId(clientId, type, project);
       if (!projectId) {
         tools.sendError(res, 'Project not found');
         return;

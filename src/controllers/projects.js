@@ -4,12 +4,13 @@ const { Sequelize, Op } = require('sequelize');
 const tools = require('../misc/tools');
 
 module.exports = {
-  async getId (taskType, name) {
+  async getId (clientId, taskType, name) {
     try {
       //find project
       let project = await Project.findOne({
         where: {
           [Op.and]: [
+            { clientId },
             { taskType },
             { name }
           ]
@@ -19,6 +20,7 @@ module.exports = {
       // create new project
       if (!project) {
         project = await Project.create({
+          clientId,
           taskType,
           name
         });

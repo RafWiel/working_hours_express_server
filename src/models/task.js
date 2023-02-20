@@ -1,5 +1,5 @@
-module.exports = (sequelize, DataTypes) =>
-  sequelize.define('Task', {
+module.exports = (sequelize, DataTypes) => {
+  const Task = sequelize.define('Task', {
     creationDate: {
       type: DataTypes.DATE,
       allowNull: false
@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) =>
     },
     version: {
       type: DataTypes.STRING(10),
-      allowNull: false,
+      allowNull: true,
     },
     description: {
       type: DataTypes.STRING(512),
@@ -41,3 +41,46 @@ module.exports = (sequelize, DataTypes) =>
     freezeTableName: true,
     tableName: 'Tasks',
   });
+
+  Task.associate = (models) => {
+    Task.belongsTo(models.Project, {
+      as: 'project',
+      foreignKey: 'projectId',
+      hooks: true,
+    });
+
+    Task.belongsTo(models.Client, {
+      as: 'client',
+      foreignKey: 'clientId',
+      //hooks: true,
+    });
+  };
+
+  Task.addHook('afterCreate', 'Create', (task) => {
+    console.log('hook afterCreate called', task.id)
+  });
+
+  // Task.addHook('beforeDestroy', 'Destroy1', (task) => {
+  //   console.log('hook beforeDestroy called', task.id);
+  // });
+
+  Task.addHook('afterDestroy', 'Destroy2', (task) => {
+    console.log('hook afterDestroy called', task.id);
+  });
+
+  Task.addHook('beforeBulkDestroy', 'Destroy', (options) => {
+    console.log('hook beforeBulkDestroy called');
+    //console.log(options);
+    options.individualHooks = true;
+    return options;
+  });
+
+  // Task.addHook('afterBulkDestroy', 'Destroy', (options) => {
+  //   console.log('hook afterBulkDestroy called');
+  //   //console.log(options);
+  //   options.individualHooks = true;
+  //   return options;
+  // });
+
+  return Task;
+}

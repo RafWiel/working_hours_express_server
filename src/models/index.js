@@ -19,6 +19,12 @@ filePaths.forEach((filePath) => {
   db[model.name] = model;
 });
 
+Object.keys(db).forEach(function (modelName) {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

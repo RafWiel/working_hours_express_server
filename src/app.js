@@ -18,8 +18,6 @@ app.use(bodyParser.json());
 app.use(helmet());
 app.use(morganMiddleware);
 
-require('./database/tableRelations');
-
 module.exports = app;
 
 // must be called after export
