@@ -1,7 +1,7 @@
 const Joi = require('joi');
 
-function processError(req, res, schema) {
-  const {error} = schema.validate(req.body);
+function processError(data, res, schema) {
+  const {error} = schema.validate(data);
     if (!error) return false;
 
     res.status(400).send({
@@ -46,7 +46,7 @@ module.exports = {
       username: Joi.string().required(),
     });
 
-    if (processError(req, res, schema)) {
+    if (processError(req.body, res, schema)) {
       return;
     }
 
@@ -58,7 +58,7 @@ module.exports = {
       password: Joi.string().required(),
     });
 
-    if (processError(req, res, schema)) {
+    if (processError(req.body, res, schema)) {
       return;
     }
 
@@ -70,7 +70,7 @@ module.exports = {
       locale: Joi.string().required().pattern(new RegExp(/^[a-z]{2}$/)).allow(null),
     });
 
-    if (processError(req, res, schema)) {
+    if (processError(req.body, res, schema)) {
       return;
     }
 

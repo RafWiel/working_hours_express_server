@@ -1,16 +1,16 @@
 const Joi = require('joi');
 const taskType = require('../enums/taskType');
 
-function processError(req, res, schema) {
-  const {error} = schema.validate(req.body);
-    if (!error) return false;
+function processError(data, res, schema) {
+  const {error} = schema.validate(data);
+  if (!error) return false;
 
-    res.status(400).send({
-      message: 'Incorrect input data',
-      details: error.details[0].message
-    });
+  res.status(400).send({
+    message: 'Incorrect input data',
+    details: error.details[0].message
+  });
 
-    return true;
+  return true;
 }
 
 module.exports = {
@@ -26,7 +26,7 @@ module.exports = {
       hours: Joi.when('type', { is: taskType.hoursBased, then: Joi.number().required() }),
     });
 
-    if (processError(req, res, schema)) {
+    if (processError(req.body, res, schema)) {
       return;
     }
 
@@ -46,7 +46,7 @@ module.exports = {
       hours: Joi.when('type', { is: taskType.hoursBased, then: Joi.number().required() }),
     });
 
-    if (processError(req, res, schema)) {
+    if (processError(req.body, res, schema)) {
       return;
     }
 
@@ -57,7 +57,7 @@ module.exports = {
       type: Joi.number().required(),
     });
 
-    if (processError(req, res, schema)) {
+    if (processError(req.query, res, schema)) {
       return;
     }
 
@@ -68,7 +68,7 @@ module.exports = {
       id: Joi.number().required(),
     });
 
-    if (processError(req, res, schema)) {
+    if (processError(req.params, res, schema)) {
       return;
     }
 
@@ -80,7 +80,7 @@ module.exports = {
       settlementDate: Joi.date().required(),
     });
 
-    if (processError(req, res, schema)) {
+    if (processError(req.body, res, schema)) {
       return;
     }
 
