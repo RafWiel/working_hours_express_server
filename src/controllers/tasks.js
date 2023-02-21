@@ -365,7 +365,8 @@ function isDuplicate(item1, item2) {
     return false;
   }
 
-  if (item1.version.localeCompare(item2.version, undefined, { sensitivity: 'accent' }) !== 0) {
+  if (!item1.version && !item2.version
+    || item1.version.localeCompare(item2.version, undefined, { sensitivity: 'accent' }) !== 0) {
     return false;
   }
 

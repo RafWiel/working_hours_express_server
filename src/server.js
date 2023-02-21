@@ -4,7 +4,7 @@ const {logger} = require("./misc/logger");
 const app = require('./app.js');
 
 const message = `Working Hours server listening on port ${config.port}`;
-const isReset = 1;
+const isReset = 0;
 
 sequelize.sync({force: isReset})
 .then(() => {
