@@ -40,7 +40,7 @@ module.exports = {
       type: Joi.number().required(),
       client: Joi.when('type', { is: taskType.priceBased, then: Joi.string().required() }),
       project: Joi.string().required(),
-      version: Joi.string().optional().allow(null),
+      version: Joi.string().optional().allow(null).allow(''),
       description: Joi.string().required(),
       price: Joi.when('type', { is: taskType.priceBased, then: Joi.number().required() }),
       hours: Joi.when('type', { is: taskType.hoursBased, then: Joi.number().required() }),
