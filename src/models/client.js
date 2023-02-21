@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Client.hasMany(models.Project, {
       as: 'projects',
-      foreignKey: 'projectId',
+      foreignKey: 'clientId',
       onDelete: 'set null',
     });
   };

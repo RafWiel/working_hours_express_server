@@ -23,7 +23,6 @@ module.exports = (sequelize, DataTypes) => {
       as: 'tasks',
       foreignKey: 'projectId',
       onDelete: 'cascade',
-      //hooks: true,
     })
   };
 

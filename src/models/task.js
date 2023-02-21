@@ -1,3 +1,5 @@
+//const { Project } = require('../models/project');
+
 module.exports = (sequelize, DataTypes) => {
   const Task = sequelize.define('Task', {
     creationDate: {
@@ -56,31 +58,50 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  Task.addHook('afterCreate', 'Create', (task) => {
-    console.log('hook afterCreate called', task.id)
-  });
-
-  // Task.addHook('beforeDestroy', 'Destroy1', (task) => {
-  //   console.log('hook beforeDestroy called', task.id);
-  // });
-
-  Task.addHook('afterDestroy', 'Destroy2', (task) => {
-    console.log('hook afterDestroy called', task.id);
-  });
-
-  Task.addHook('beforeBulkDestroy', 'Destroy', (options) => {
+  Task.addHook('beforeBulkDestroy', 'beforeBulkDestroy', (options) => {
     console.log('hook beforeBulkDestroy called');
-    //console.log(options);
+
     options.individualHooks = true;
     return options;
   });
 
-  // Task.addHook('afterBulkDestroy', 'Destroy', (options) => {
-  //   console.log('hook afterBulkDestroy called');
-  //   //console.log(options);
-  //   options.individualHooks = true;
-  //   return options;
-  // });
+  Task.addHook('afterDestroy', 'afterDestroy', (task) => {
+    verifyDeleteClients(Task, sequelize.models.Client, task.clientId);
+    verifyDeleteProjects(Task, sequelize.models.Project, task.projectId);
+
+  });
 
   return Task;
 }
+
+async function verifyDeleteClients(Task, Client, clientId) {
+  if (!clientId) return;
+
+  const count = await Task.count({
+    where: { clientId },
+  });
+
+  console.log('hook afterDestroy Client: ', count);
+
+  if (count > 0) return;
+
+  Client.destroy({
+    where: { id: clientId }
+  });
+}
+
+async function verifyDeleteProjects(Task, Project, projectId) {
+  const count = await Task.count({
+    where: { projectId },
+  });
+
+  console.log('hook afterDestroy Project: ', count);
+
+  if (count > 0) return;
+
+  Project.destroy({
+    where: { id: projectId }
+  });
+}
+
+
