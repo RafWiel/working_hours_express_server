@@ -64,7 +64,8 @@ describe('GET /projects/names/distinct', () => {
         .get('/server/projects/names/distinct')
         .query({
           'task-type': 1,
-          filter: 'i'
+          filter: 'i',
+          client: 'js',
         });
 
       expect(Array.isArray(response.body)).toBeTruthy();

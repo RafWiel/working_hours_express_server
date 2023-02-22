@@ -1,5 +1,5 @@
 const { logger } = require('../misc/logger');
-const {Project} = require('../models');
+const { Project, Client } = require('../models');
 const { Sequelize, Op } = require('sequelize');
 const tools = require('../misc/tools');
 
@@ -35,27 +35,32 @@ module.exports = {
     return null;
   },
   async getNamesDistinct (req, res) {
-    let where = {};
+    let client = null;
+
+    if (req.query['client']) {
+      client = await Client.findOne({
+        attributes: [ 'id' ],
+        where: {
+          name: req.query['client'],
+        }
+      });
+    }
+
+    let where = `taskType = ${req.query['task-type']} `;
 
     if(req.query.filter) {
-      where = {
-        [Op.and]: [
-          { taskType: req.query['task-type'] },
-          { name: {
-            [Op.like]: `%${req.query.filter}%`
-          } }
-        ]
-      };
+      where += `and name like '%${req.query.filter}%'`
     }
-    else {
-      where = {
-        taskType: req.query['task-type'],
-      }
+
+    if(!!client === true) {
+      where += `and clientId = ${client.id}`
     }
+
+    // console.log('where: ', where);
 
     Project.findAll({
       attributes: [Sequelize.fn('distinct', Sequelize.col('name')) ,'name'],
-      where
+      where: Sequelize.literal(where)
     })
     .then((values) => res.send(values.map(u => u.name)))
     .catch((error) => tools.sendError(res, error));

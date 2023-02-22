@@ -4,7 +4,8 @@ module.exports = {
   getNamesDistinct (req, res, next) {
     const schema = Joi.object({
       'task-type': Joi.number().required(),
-      filter: Joi.string().optional(),
+      filter: Joi.string().optional().allow(null).allow(''),
+      client: Joi.string().optional().allow(null).allow(''),
     });
 
     const {error} = schema.validate(req.query);

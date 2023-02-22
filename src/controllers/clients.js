@@ -12,7 +12,7 @@ module.exports = {
       //find client
       let client = await Client.findOne({
         where: {
-          name: name,
+          name,
         }
       });
 
