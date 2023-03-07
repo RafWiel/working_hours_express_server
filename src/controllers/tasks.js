@@ -7,7 +7,7 @@ const tools = require('../misc/tools');
 const {logger} = require('../misc/logger');
 const taskType = require('../enums/taskType');
 const moment = require('moment');
-const { QueryTypes, Op } = require('sequelize');
+const { Sequelize, Op, QueryTypes } = require('sequelize');
 const {sequelize} = require('../models');
 const sortOrder = require('../enums/sortOrder');
 const timePeriod = require('../enums/timePeriod');
@@ -112,7 +112,9 @@ module.exports = {
     }
   },
   async getLast (req, res) {
-    getLastTask(req.query.type)
+    const { type, client, project } = req.query;
+
+    getLastTask(type, client, project)
     .then((item) => res.send(item))
     .catch((error) => tools.sendError(res, error));
   },
@@ -387,10 +389,40 @@ function isDuplicate(item1, item2) {
   return true;
 }
 
-function getLastTask(type) {
-  return new Promise((resolve, reject) => {
-    if (!type) reject(new Error('Task type not defined'));
+async function getLastTask(type, clientName, projectName) {
+  let client = null;
 
+  if (clientName) {
+    client = await Client.findOne({
+      attributes: [ 'id' ],
+      where: {
+        name: clientName,
+      }
+    });
+  }
+
+  let project = null;
+  if (projectName) {
+    let where = `
+      taskType = ${type} and
+      name like '%${projectName}%'`
+
+    if(!!client === true) {
+      where += `and clientId = ${client.id}`
+    }
+
+    console.log(where);
+
+    project = await Project.findOne({
+      attributes: [ 'id' ],
+      where: Sequelize.literal(where)
+    });
+  }
+
+  console.log('client', client ? client.id : null);
+  console.log('project', project ? project.id : null);
+
+  return new Promise((resolve, reject) => {
     Task.findOne({
       order: [['id', 'DESC']],
       include: [{

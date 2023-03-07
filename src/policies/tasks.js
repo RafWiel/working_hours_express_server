@@ -55,6 +55,8 @@ module.exports = {
   getLast (req, res, next) {
     const schema = Joi.object({
       type: Joi.number().required(),
+      client: Joi.string().optional().allow(null).allow(''),
+      project: Joi.string().optional().allow(null).allow(''),
     });
 
     if (processError(req.query, res, schema)) {
