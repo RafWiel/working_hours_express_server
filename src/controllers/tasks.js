@@ -390,37 +390,41 @@ function isDuplicate(item1, item2) {
 }
 
 async function getLastTask(type, clientName, projectName) {
-  let client = null;
-
-  if (clientName) {
-    client = await Client.findOne({
-      attributes: [ 'id' ],
-      where: {
-        name: clientName,
-      }
-    });
-  }
-
   let project = null;
   if (projectName) {
+    let client = null;
+
+    if (clientName) {
+      client = await Client.findOne({
+        attributes: [ 'id' ],
+        where: {
+          name: clientName,
+        }
+      });
+    }
+
+    // console.log('client', client ? client.id : null);
+
     let where = `
       taskType = ${type} and
-      name like '%${projectName}%'`
+      name = '${projectName}'`
 
     if(!!client === true) {
       where += `and clientId = ${client.id}`
     }
 
-    console.log(where);
-
     project = await Project.findOne({
       attributes: [ 'id' ],
       where: Sequelize.literal(where)
     });
+
+    // console.log('project', project ? project.id : null);
   }
 
-  console.log('client', client ? client.id : null);
-  console.log('project', project ? project.id : null);
+  let where = `type = ${type} `;
+  if (projectName) {
+    where += `and projectId = ${!!project === true ? project.id : null}`
+  }
 
   return new Promise((resolve, reject) => {
     Task.findOne({
@@ -434,9 +438,7 @@ async function getLastTask(type, clientName, projectName) {
         as: 'project',
         required: true
       },],
-      where: {
-        type,
-      },
+      where: Sequelize.literal(where)
     })
     .then((task) => {
       if (!task) resolve(null);
