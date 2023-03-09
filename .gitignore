@@ -107,4 +107,6 @@ typings/
 #dist directory
 dist
 
+#package-lock.json
+package-lock.json
 
