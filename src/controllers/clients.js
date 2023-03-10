@@ -56,7 +56,7 @@ module.exports = {
       const page = req.query.page || 1;
 
       // sorting columns
-      const sortColumn = req.query['sort-column'] ? req.query['sort-column'] : 'creationDate';
+      const sortColumn = req.query['sort-column'] ? req.query['sort-column'] : 'client';
       const order = sortOrder.getSqlKeyword(req.query['sort-order']);
 
       // run query
