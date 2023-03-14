@@ -9,5 +9,6 @@ module.exports = (app) => {
   app.get(`/${process.env.URL_PATH}/tasks/:id`, authorization.filter, policy.getOne, controller.getOne);
   app.get(`/${process.env.URL_PATH}/tasks`, authorization.filter, controller.get);
   app.post(`/${process.env.URL_PATH}/tasks/settle`, authorization.filter, policy.settle, controller.settle);
+  app.post(`/${process.env.URL_PATH}/tasks/invoice`, authorization.filter, policy.invoice, controller.invoice);
   app.delete(`/${process.env.URL_PATH}/tasks/:id`, authorization.filter, policy.getOne, controller.delete);
 }

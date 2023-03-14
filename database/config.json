@@ -1,0 +1,16 @@
+{
+  "development": {
+    "host": "localhost",
+    "database": "Settlement",
+    "username": "dev",
+    "password": "dev",
+    "dialect": "mysql"
+  },
+  "production": {
+    "host": "localhost",
+    "database": "srv52425_settlement",
+    "username": "srv52425_admin",
+    "password": "2cXXgru00*!23*",
+    "dialect": "mysql"
+  }
+}

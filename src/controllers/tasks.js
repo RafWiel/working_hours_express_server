@@ -168,6 +168,7 @@ module.exports = {
           t.id,
           t.creationDate,
           t.settlementDate,
+          t.invoiceDate,
           t.type,
           t.version,
           t.description,
@@ -283,6 +284,39 @@ module.exports = {
       tools.sendError(res, error);
     }
   },
+  async invoice (req, res) {
+    try {
+      logger.info(req.body);
+
+      const { idArray } = req.body;
+      let { invoiceDate } = req.body;
+
+      invoiceDate = moment(invoiceDate).format('YYYY-MM-DD');
+
+      Task.update({
+        invoiceDate,
+      }, {
+        where: {
+          [Op.and]: [
+            { id: idArray },
+            {
+              invoiceDate: {
+                [Op.eq]: null
+              }
+            }
+          ],
+        },
+      }
+      )
+      .then(async () => {
+        res.status(200).send();
+      })
+      .catch((error) => tools.sendError(res, error));
+    }
+    catch (error) {
+      tools.sendError(res, error);
+    }
+  },
   async getOne (req, res) {
     try {
       const { id } = req.params;
@@ -311,6 +345,7 @@ module.exports = {
           id: task.id,
           creationDate: task.creationDate,
           settlementDate: task.settlementDate,
+          invoiceDate: task.invoiceDate,
           type: task.type,
           version: task.version,
           description: task.description,
@@ -447,6 +482,7 @@ async function getLastTask(type, clientName, projectName) {
         resolve({
           creationDate: task.creationDate,
           settlementDate: task.settlementDate,
+          invoiceDate: task.invoiceDate,
           client: task.client.name,
           project: task.project.name,
           version: task.version,

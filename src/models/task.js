@@ -10,6 +10,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: true
     },
+    invoiceDate: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
     type: {
       type: DataTypes.TINYINT,
       allowNull: false

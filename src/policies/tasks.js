@@ -88,4 +88,16 @@ module.exports = {
 
     next();
   },
+  invoice (req, res, next) {
+    const schema = Joi.object({
+      idArray: Joi.array().items(Joi.number()).required(),
+      invoiceDate: Joi.date().required(),
+    });
+
+    if (processError(req.body, res, schema)) {
+      return;
+    }
+
+    next();
+  },
 }
