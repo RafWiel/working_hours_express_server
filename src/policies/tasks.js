@@ -37,6 +37,7 @@ module.exports = {
       id: Joi.number().required(),
       creationDate: Joi.date().required(),
       settlementDate: Joi.date().optional().allow(null),
+      invoiceDate: Joi.date().optional().allow(null),
       type: Joi.number().required(),
       client: Joi.when('type', { is: taskType.priceBased, then: Joi.string().required() }),
       project: Joi.string().required(),

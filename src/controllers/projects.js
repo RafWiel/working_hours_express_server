@@ -46,17 +46,14 @@ module.exports = {
       });
     }
 
-    let where = `taskType = ${req.query['task-type']} `;
+    let where = `taskType = ${req.query['task-type']}
+      and clientId = ${(client ? client.id : 0)} `;
 
     if(req.query.filter) {
       where += `and name like '%${req.query.filter}%'`
     }
 
-    if(!!client === true) {
-      where += `and clientId = ${client.id}`
-    }
-
-    // console.log('where: ', where);
+    console.log('where: ', where);
 
     Project.findAll({
       attributes: [Sequelize.fn('distinct', Sequelize.col('name')) ,'name'],
