@@ -12,6 +12,7 @@ const {sequelize} = require('../models');
 const sortOrder = require('../enums/sortOrder');
 const timePeriod = require('../enums/timePeriod');
 const settlementType = require('../enums/settlementType');
+const invoiceType = require('../enums/invoiceType');
 
 module.exports = {
   async create (req, res) {
@@ -208,6 +209,16 @@ module.exports = {
               end
             else true end
           and
+            case when :invoiceType is not null then
+              case when :invoiceType = :issued then
+                t.invoiceDate is not null
+              else
+                case when :invoiceType = :notIssued then
+                  t.invoiceDate is null
+                end
+              end
+            else true end
+          and
             case when :clientId is not null then
               c.id = :clientId
             else true end
@@ -224,6 +235,9 @@ module.exports = {
           settlementType: req.query['settlement-type'] && parseInt(req.query['settlement-type']) !== settlementType.all ? parseInt(req.query['settlement-type']) : null,
           settled: settlementType.settled,
           unsettled: settlementType.unsettled,
+          invoiceType: req.query['invoice-type'] && parseInt(req.query['invoice-type']) !== invoiceType.all ? parseInt(req.query['invoice-type']) : null,
+          issued: invoiceType.issued,
+          notIssued: invoiceType.notIssued,
           clientId: req.query['client-id'] ? parseInt(req.query['client-id']) : null,
           offset: 50 * (page - 1),
         },
