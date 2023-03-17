@@ -2,6 +2,7 @@ const { logger } = require('../misc/logger');
 const { Project, Client } = require('../models');
 const { Sequelize, Op } = require('sequelize');
 const tools = require('../misc/tools');
+const taskType = require('../enums/taskType');
 
 module.exports = {
   async getId (clientId, taskType, name) {
@@ -46,14 +47,18 @@ module.exports = {
       });
     }
 
-    let where = `taskType = ${req.query['task-type']}
-      and clientId = ${(client ? client.id : 0)} `;
+    const { filter } = req.query;
+    const type = parseInt(req.query['task-type']);
 
-    if(req.query.filter) {
-      where += `and name like '%${req.query.filter}%'`
+    let where = `taskType = ${type} `;
+
+    if(filter) {
+      where += `and name like '%${filter}%'`
     }
 
-    console.log('where: ', where);
+    if(!!client === true || type === taskType.priceBased) {
+      where += `and clientId = ${(client ? client.id : 0)}`
+    }
 
     Project.findAll({
       attributes: [Sequelize.fn('distinct', Sequelize.col('name')) ,'name'],
