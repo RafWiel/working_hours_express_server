@@ -5,6 +5,7 @@ const tools = require('../misc/tools');
 const {sequelize} = require('../models');
 const sortOrder = require('../enums/sortOrder');
 const settlementType = require('../enums/settlementType');
+const invoiceType = require('../enums/invoiceType');
 
 module.exports = {
   async getId (name) {
@@ -79,6 +80,16 @@ module.exports = {
                 end
               end
             else true end
+          and
+            case when :invoiceType is not null then
+              case when :invoiceType = :issued then
+                t.invoiceDate is not null
+              else
+                case when :invoiceType = :notIssued then
+                  t.invoiceDate is null
+                end
+              end
+            else true end
         group by c.name
         order by ${sortColumn} ${order}
         limit 50
@@ -90,6 +101,9 @@ module.exports = {
           settlementType: req.query['settlement-type'] && parseInt(req.query['settlement-type']) !== settlementType.all ? parseInt(req.query['settlement-type']) : null,
           settled: settlementType.settled,
           unsettled: settlementType.unsettled,
+          invoiceType: req.query['invoice-type'] && parseInt(req.query['invoice-type']) !== invoiceType.all ? parseInt(req.query['invoice-type']) : null,
+          issued: invoiceType.issued,
+          notIssued: invoiceType.notIssued,
           offset: 50 * (page - 1),
         },
       })
