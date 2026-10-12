@@ -181,8 +181,6 @@ module.exports = {
         left join Clients c on c.id = t.clientId
         left join Projects p on p.id = t.projectId
         where (
-            t.version like :search or
-            t.description like :search or
             c.name like :search or
             p.name like :search
           )

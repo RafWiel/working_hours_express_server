@@ -92,4 +92,36 @@ module.exports = {
 
     res.sendStatus(200);
   },
+  async setPassword (req, res) {
+    const {username, oldPassword, password} = req.body;
+
+    // verify username
+    var user = await User.findOne({
+      where: { username: username }
+    });
+
+    if (!user) {
+      return tools.sendLoginError(res, 'Username not found');
+    }
+
+    // verify old password
+    const isValidPassword = await user.comparePassword(oldPassword);
+    if (!isValidPassword) {
+      return tools.sendLoginError(res, 'Invalid old password');
+    }
+
+    //hash new password
+    await user.hashPassword(password);
+
+    User.update({
+      password: user.password,
+    },{
+      where: { username }
+    })
+    .then(() => {
+      res.status(200).send();
+    })
+    .catch((error) => tools.sendError(res, error));
+    
+  },
 }

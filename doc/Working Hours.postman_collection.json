@@ -1,0 +1,144 @@
+{
+  "info": {
+    "_postman_id": "81b10aa2-1799-472e-98ee-b7a964830a53",
+    "name": "Working Hours",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50398089",
+    "_collection_link": "https://go.postman.co/collection/50398089-81b10aa2-1799-472e-98ee-b7a964830a53?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Clients",
+      "item": [
+        {
+          "name": "Get client names",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/clients/names/distinct",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "clients",
+                "names",
+                "distinct"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get clients",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/clients",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "clients"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "Get tasks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/tasks?search=js",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "tasks"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "js"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Set password",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"rafal.wielicki\",\r\n    \"oldPassword\": \"abc\",\r\n    \"password\": \"def\"\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/password",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create user",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"user1\",\r\n    \"password\": \"Spierdalaj1!\",\r\n    \"type\": 0,\r\n    \"firstName\": \"User\",\r\n    \"lastName\": \"\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseURL",
+      "value": ""
+    }
+  ]
+}

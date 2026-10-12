@@ -76,4 +76,30 @@ module.exports = {
 
     next();
   },
+  setPassword (req, res, next) {
+    const schema = Joi.object({
+      username: Joi.string().required(),
+      oldPassword: Joi.string().required(),
+      password: Joi.string().required().pattern(
+        new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$/)
+      ),      
+    });
+
+    const {error} = schema.validate(req.body);
+    if (error) {
+      switch (error.details[0].context.key) {
+        case 'password':
+          res.status(400).send({
+            code: 4001,
+            message: 'Password does not meet policy requirements'
+          });
+          break;
+        default:
+          res.status(400).send({
+            message: 'Incorrect input data',
+            details: error.details[0].message
+          });
+      }
+    } else next();
+  },
 }
